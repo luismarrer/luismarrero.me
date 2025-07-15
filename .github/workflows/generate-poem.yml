@@ -1,16 +1,19 @@
 name: Generate Poem
-description: Generate a daily poem using a AI API and commit it to the repository.
 
 on:
   workflow_dispatch:
   schedule:
     - cron: '00 20 * * *' # Run every day at 20:00 UTC (starts cheap hour)
 
+permissions:
+  contents: write
+
 jobs:
   generate:
     runs-on: ubuntu-latest
     env:
       DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Clone repository
