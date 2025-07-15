@@ -1,14 +1,14 @@
 {
-  "userEmail": "user@email.com",
-  "userPhoneNumber": "user-phone-number",
+  "userEmail": "luismarrer.dev@gmail.com",
+  "userPhoneNumber": "+1 787-487-0310",
   "userSocials": [
     {
       "title": "LinkedIn",
-      "link": "https://www.linkedin.com/in/linkedinHandle"
+      "link": "https://www.linkedin.com/in/luismarrer"
     },
     {
       "title": "GitHub",
-      "link": "https://www.github.com/githubUsername"
+      "link": "https://www.github.com/luismarrer"
     }
   ]
 }
