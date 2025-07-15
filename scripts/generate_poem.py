@@ -1,10 +1,30 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone, time
+from dotenv import load_dotenv
 import json
+import os
 
-
-
-DEEPSEEK_API_KEY = ""
+load_dotenv()  # Load environment variables from .env file in development environment if it exists
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "your_ai_api_key_here")
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
+
+def get_best_model_by_time():
+    """
+    Returns the best model based on the current time.
+    This is a placeholder function that can be modified to return different models based on time.
+
+    DeepSeek has a discount price between UTC 16:30 and 00:30. In this hour range the reasoner model cost the same as the chat model.
+    The reasoner model is more powerful and can be used for more complex tasks.
+    The idea is to use the reasoner model during this time range and the chat model during the rest of the day.
+
+    DeepSeek pricing: https://api-docs.deepseek.com/quick_start/pricing/
+    """
+    current_time = datetime.now(timezone.utc)
+    if current_time.hour >= 16.5 and current_time.hour < 24.5:
+        return "deepseek-reasoner"
+    else:
+        return "deepseek-chat"
+
+MODEL = get_best_model_by_time()
 
 # Class to interact with an AI API based on the OPENAI API structure (e.g., DeepSeek)
 class AI_API:
@@ -16,7 +36,7 @@ class AI_API:
         self.url = url
         self.model = model
     
-    def call(self, prompt):
+    def call(self, prompt: str) -> str | None:
         import requests
         """
         Call the AI API with the provided prompt.
@@ -34,22 +54,50 @@ class AI_API:
             response = requests.post(self.url, json=data, headers=headers)
             res_json = response.json()
             return res_json["choices"][0]["message"]["content"] # return the content of the response message
-        except requests.exceptions.RequestException as e:
+        except (requests.exceptions.RequestException, KeyError) as e:
             print(f"Error al hacer la petición: {e}")
             return None
 
 
-deepseek_api = AI_API(DEEPSEEK_API_KEY, DEEPSEEK_API_URL, "deepseek-chat")
-poem = deepseek_api.call("Escribe un breve poema sobre la programación")
+prompt = """
+Escribe un poema breve y original sobre la programación.
+
+Debe comenzar con un título, seguido por una línea en blanco, y luego el poema. No incluyas introducciones, despedidas ni explicaciones. Solo el poema.
+
+Ejemplo de formato:
+
+Código y Verso
+
+Eres lógica pura,  
+estructura clara,  
+sintaxis precisa  
+que el mundo declara.
+
+Cada línea un paso,  
+cada error, enseñanza,  
+y al fin, cuando compila,  
+¡qué dulce es la recompensa!
+
+— *Un bucle de ideas,  
+un *if* en la mente,  
+la máquina obedece  
+cuando el código es coherente.*
+""".strip()
+
+deepseek_api = AI_API(DEEPSEEK_API_KEY, DEEPSEEK_API_URL, MODEL)
+poem = deepseek_api.call(prompt=prompt)
 
 if poem:
+    poem = poem.strip()  # Clean up the poem text
     json_data = {
+        "model": MODEL,
         "date": datetime.today().strftime("%Y-%m-%d"),
         "title": poem.split('\n')[0],  # Use the first line as the title
-        "poem": poem
+        "poem": poem.split('\n', 1)[1].strip()  # Use the rest as the poem content
     }
 else:
     json_data = {
+        "model": "Pablo Neruda",
         "date": datetime.today().strftime("%Y-%m-%d"),
         "title": "Poema del día",
         "poem": """Lo distinguimos
