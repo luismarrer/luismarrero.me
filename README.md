@@ -6,6 +6,6 @@ I'll upload some experiments here. If you want to see my resume and projects, yo
 
 ## TODO
 
-[] Create a AI Poems section
-[] Create a Python script to generate poems using AI
-[] Use GitHub Actions to run the script and generate a new poem every day
+- [] Create a AI Poems section
+- [] Create a Python script to generate poems using AI
+- [] Use GitHub Actions to run the script and generate a new poem every day
