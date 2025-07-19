@@ -12,19 +12,22 @@ const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
 ---
 
 <h2 class="text-2xl">AI Poems</h2>
-<p>Explore the world of AI-generated poetry.</p>
-<div class="poem-container">
+<div>
     {
         todayPoem ? (
             <>
-                <h1>{todayPoem.title}</h1>
+                <h3 class="text-xl">{todayPoem.title}</h3>
+                <pre>{todayPoem.poem}</pre>
+            </>
+            <p>
+                Explore the world of AI-generated poetry.<br>
+                Every day a new poem awaits you!
+            </p>
                 <p>
                     <em>
-                        {todayPoem.date} — Modelo: {todayPoem.model}
+                        {todayPoem.date} — Model: {todayPoem.model}
                     </em>
                 </p>
-                <pre style="white-space: pre-wrap;">{todayPoem.poem}</pre>
-            </>
         ) : (
             <p>No hay poema para hoy. Intenta más tarde.</p>
         )
