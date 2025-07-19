@@ -9,7 +9,8 @@ import Poems from "@/components/Poems.astro"
 import { siteTitle, siteDescription } from "@/data/site.json"
 import { userProfessionalDescription } from "@/data/user-professional.json"
 import { userIntroduction, userName } from "@/data/user-personal.json"
-import userPicture from "public/user-picture.jpeg"
+// import userPicture from "public/user-picture.jpeg"
+const userPicture = "https://avatars.githubusercontent.com/u/144063514?v=4"
 import { getCollection } from "astro:content"
 
 const allPosts = (await getCollection("posts")).filter(
@@ -68,7 +69,7 @@ const cosmeticTexts: { [section: string]: string } = {
       >
         <img
           class="h-48 w-48 scale-110 -rotate-z-12 overflow-clip object-cover rounded-interactive group-hover/image:scale-[101%] group-hover/image:-rotate-z-0 duration-200"
-          src={userPicture.src}
+          src={userPicture}
           alt={`${userName}'s profile picture.`}
         />
       </div>
