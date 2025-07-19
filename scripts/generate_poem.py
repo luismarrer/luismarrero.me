@@ -12,7 +12,7 @@ def get_best_model_by_time():
     Returns the best model based on the current time.
     This is a placeholder function that can be modified to return different models based on time.
 
-    DeepSeek has a discount price between UTC 16:30 and 00:30. In this hour range the reasoner model cost the same as the chat model.
+    DeepSeek offers a discounted price between UTC 16:30 and 00:30. Within this hour range, the reasoner model costs the same as the chat model.
     The reasoner model is more powerful and can be used for more complex tasks.
     The idea is to use the reasoner model during this time range and the chat model during the rest of the day.
 
@@ -25,6 +25,7 @@ def get_best_model_by_time():
         return "deepseek-chat"
 
 MODEL = get_best_model_by_time()
+TEMPERATURE = 0.8  # Adjust the temperature for creativity
 
 # Class to interact with an AI API based on the OPENAI API structure (e.g., DeepSeek)
 class AI_API:
@@ -35,8 +36,8 @@ class AI_API:
         self.api_key = api_key
         self.url = url
         self.model = model
-    
-    def call(self, prompt: str) -> str | None:
+
+    def call(self, prompt: str, temperature: float) -> str | None:
         import requests
         """
         Call the AI API with the provided prompt.
@@ -47,7 +48,8 @@ class AI_API:
         }
         data = {
             'model': self.model,
-            'messages': [{'role': 'user', 'content': prompt}]
+            'messages': [{'role': 'user', 'content': prompt}],
+            'temperature': temperature,
         }
 
         try:
@@ -64,7 +66,7 @@ Escribe un poema breve y original sobre la programación.
 
 Debe comenzar con un título, seguido por una línea en blanco, y luego el poema. No incluyas introducciones, despedidas ni explicaciones. Solo el poema.
 
-Ejemplo de formato:
+Ejemplo de respuesta:
 
 Código y Verso
 
@@ -78,27 +80,27 @@ cada error, enseñanza,
 y al fin, cuando compila,  
 ¡qué dulce es la recompensa!
 
-— *Un bucle de ideas,  
-un *if* en la mente,  
+Un bucle de ideas,  
+un if en la mente,  
 la máquina obedece  
-cuando el código es coherente.*
+cuando el código es coherente.
 """.strip()
 
 deepseek_api = AI_API(DEEPSEEK_API_KEY, DEEPSEEK_API_URL, MODEL)
-poem = deepseek_api.call(prompt=prompt)
+poem = deepseek_api.call(prompt=prompt, temperature=TEMPERATURE)
 
 if poem:
     poem = poem.strip()  # Clean up the poem text
     json_data = {
         "model": MODEL,
-        "date": datetime.today().strftime("%Y-%m-%d"),
+        "date": (datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d"),  # Use tomorrow's date for the poem
         "title": poem.split('\n')[0],  # Use the first line as the title
         "poem": poem.split('\n', 1)[1].strip()  # Use the rest as the poem content
     }
 else:
     json_data = {
         "model": "Pablo Neruda",
-        "date": datetime.today().strftime("%Y-%m-%d"),
+        "date": (datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
         "title": "Poema del día",
         "poem": """Lo distinguimos
 como

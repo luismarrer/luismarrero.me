@@ -1,2 +1,32 @@
+---
+import { getCollection } from "astro:content"
+
+// fecha local Puerto Rico (UTC-4)
+const offsetMin = -4 * 60
+const prDateToday = new Date(Date.now() + offsetMin * 60_000)
+    .toISOString()
+    .slice(0, 10) // YYYY-MM-DD
+
+const ai_poems = await getCollection("ai_poems")
+const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
+---
+
 <h2 class="text-2xl">AI Poems</h2>
 <p>Explore the world of AI-generated poetry.</p>
+<div class="poem-container">
+    {
+        todayPoem ? (
+            <>
+                <h1>{todayPoem.title}</h1>
+                <p>
+                    <em>
+                        {todayPoem.date} — Modelo: {todayPoem.model}
+                    </em>
+                </p>
+                <pre style="white-space: pre-wrap;">{todayPoem.poem}</pre>
+            </>
+        ) : (
+            <p>No hay poema para hoy. Intenta más tarde.</p>
+        )
+    }
+</div>
