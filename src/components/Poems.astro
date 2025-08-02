@@ -1,7 +1,8 @@
 ---
 import { getCollection } from "astro:content"
 
-// fecha local Puerto Rico (UTC-4)
+// Puerto Rico is UTC-4, so we need to adjust the date accordingly
+// We will use a fixed offset of -4 hours to simulate the local time
 const offsetMin = -4 * 60
 const prDateToday = new Date(Date.now() + offsetMin * 60_000)
     .toISOString()
@@ -17,7 +18,7 @@ const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
         todayPoem ? (
             <>
                 <h3 class="text-xl">{todayPoem.title}</h3>
-                <pre>{todayPoem.poem}</pre>
+                <pre class="p-2">{todayPoem.poem}</pre>
             </>
             <p>
                 Explore the world of AI-generated poetry.<br>
