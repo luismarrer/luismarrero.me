@@ -1,11 +1,26 @@
-# Luis Marrero - Personal Website
+# Luis Marrero – Personal Website
 
-The template belongs to [Kadir Lofca](https://github.com/kadirlofca).
+[![Website](https://img.shields.io/badge/site-luismarrero.me-0f172a?style=for-the-badge)](https://www.luismarrero.me/)
 
-I'll upload some experiments here. If you want to see my resume and projects, you can go to [my portfolio](https://luismarrer.github.io/en/).
+This is my personal site built with [Astro](https://astro.build).  
+I use it to experiment with ideas, explore creative tools, and connect my projects.
 
-## TODO
+This site is based on a template created by [Kadir Lofca](https://github.com/kadirlofca), who deserves all the credit for the design and structure. I've adapted it for my experiments.
 
-- [X] Create a AI Poems section in Astro
-- [X] Create a Python script to generate poems using AI
-- [X] Use GitHub Actions to run the script and generate a new poem every day
+If you're looking for my resume and portfolio, visit [luismarrer.github.io/en](https://luismarrer.github.io/en/).
+
+## 🧪 Experiments
+
+### Python
+
+- [AI Poems](https://www.luismarrero.me/) — Daily poetry generated using AI API (DeepSeek), automatically committed with GitHub Actions.
+  
+- [Markdown Regex Editor](https://www.luismarrero.me/regex) — A Markdown editor built using only Regex.
+
+## ✅ TODOs
+
+- [ ] Regex
+
+---
+
+Feel free to explore, fork, or reach out.
