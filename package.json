@@ -24,6 +24,7 @@
     "svelte": "^5.22.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.9",
+    "ts-debounce": "^4.0.0",
     "typescript": "^5.8.2"
   },
   "devDependencies": {

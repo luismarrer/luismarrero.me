@@ -41,6 +41,9 @@ importers:
       tailwindcss:
         specifier: ^4.0.9
         version: 4.0.9
+      ts-debounce:
+        specifier: ^4.0.0
+        version: 4.0.0
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -1681,6 +1684,9 @@ packages:
 
   trough@2.2.0:
     resolution: {integrity: sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==}
+
+  ts-debounce@4.0.0:
+    resolution: {integrity: sha512-+1iDGY6NmOGidq7i7xZGA4cm8DAa6fqdYcvO5Z6yBevH++Bdo9Qt/mN0TzHUgcCcKv1gmh9+W5dHqz8pMWbCbg==}
 
   tsconfck@3.1.5:
     resolution: {integrity: sha512-CLDfGgUp7XPswWnezWwsCRxNmgQjhYq3VXHM0/XIRxhVrKw0M1if9agzryh1QS3nxjCROvV+xWxoJO1YctzzWg==}
@@ -4058,6 +4064,8 @@ snapshots:
   trim-lines@3.0.1: {}
 
   trough@2.2.0: {}
+
+  ts-debounce@4.0.0: {}
 
   tsconfck@3.1.5(typescript@5.8.2):
     optionalDependencies:
