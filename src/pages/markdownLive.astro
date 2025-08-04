@@ -1,0 +1,15 @@
+---
+import MarkdownEditor from "@/components/reactive/MarkdownEditor.svelte"
+import Layout from "@/layouts/Layout.astro"
+import Section from "@/components/Section.astro"
+---
+
+<Layout
+    siteTitle="Markdown Live Editor"
+    siteDescription="A live Markdown editor using regex"
+    headerCosmeticText="MARKDOWN"
+>
+    <Section class="p-4 flex flex-col md:flex-row gap-4">
+        <MarkdownEditor client:load />
+    </Section>
+</Layout>
