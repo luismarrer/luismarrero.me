@@ -14,12 +14,15 @@ If you're looking for my resume and portfolio, visit [luismarrer.github.io/en](h
 ### Python
 
 - [AI Poems](https://www.luismarrero.me/) — Daily poetry generated using AI API (DeepSeek), automatically committed with GitHub Actions.
-  
-- [Markdown Regex Editor](https://www.luismarrero.me/regex) — A Markdown editor built using only Regex.
+
+- [Markdown Regex Editor](https://www.luismarrero.me/markdown-live) — A Markdown editor built using Regex. Deployed on Railway.
 
 ## ✅ TODOs
 
-- [ ] Regex
+- [X] page for markdown regex editor
+- [X] navbar
+- [ ] Add more markdown features
+- [ ] Fix newline, tabs and spaces handling in Markdown editor
 
 ---
 
