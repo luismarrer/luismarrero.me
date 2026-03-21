@@ -9,7 +9,7 @@
 
   async function parse() {
     try {
-      const res = await fetch("https://markdown-regex-production.up.railway.app/parse", {
+      const res = await fetch("https://markdown-regex.vercel.app/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text })
