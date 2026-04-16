@@ -1,0 +1,6 @@
+{
+  "model": "deepseek-reasoner",
+  "date": "2026-03-28",
+  "title": "Bucle Infinito",
+  "poem": "Deseo escribir un bucle que no termine,\nuna función que al llamarla siempre suba,\nque guarde en su stack el tiempo que ilumine\ny no devuelva nunca un nulo o una nube gris.\n\nQue su condición sea un \"siempre si\",\nsu iteración, un verso que compile,\ny en cada pasada encuentre para mí\nla línea exacta que el silencio borra.\n\nDeseo escribir un bucle que no termine."
+}
