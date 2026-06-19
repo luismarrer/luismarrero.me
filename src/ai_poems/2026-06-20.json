@@ -1,0 +1,6 @@
+{
+  "model": "deepseek-reasoner",
+  "date": "2026-06-20",
+  "title": "Bucle Infinito",
+  "poem": "Un while sin condición,  \nvariables que se agotan,  \nel puntero en la nada  \ny un segfault que te brota.  \n\nComentas en silencio:  \n\"Esto nunca va a fallar\" —  \ny al correrlo, la terminal  \nno deja de parpadear."
+}
