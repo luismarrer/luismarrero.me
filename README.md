@@ -29,7 +29,7 @@ uv run ruff format scripts tests
 
 Set `DEEPSEEK_API_KEY` in `.env` for local generation. You can override the model with `DEEPSEEK_MODEL`.
 
-- [Markdown Regex Editor](https://www.luismarrero.me/markdown-live) — A Markdown editor built using Regex. The parser is deployed on Railway.
+- [Markdown Regex Editor](https://www.luismarrero.me/markdown-live) — A Markdown editor built using Regex.
 
 ## ✅ TODOs
 

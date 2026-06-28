@@ -7,9 +7,16 @@
   let text = "# Hola\n## mundo\n_Esto_ **es** *markdown*\n\n";
   let html = "";
 
+  // In production we call the parser directly (its CORS allows that origin).
+  // In dev the request is proxied through the Astro dev server (see
+  // astro.config.mjs) so the browser doesn't hit a CORS wall on localhost.
+  const PARSE_URL = import.meta.env.DEV
+    ? "/api/markdown-parse"
+    : "https://markdown-regex.vercel.app/parse";
+
   async function parse() {
     try {
-      const res = await fetch("https://markdown-regex.vercel.app/parse", {
+      const res = await fetch(PARSE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text })
