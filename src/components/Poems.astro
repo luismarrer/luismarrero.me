@@ -22,9 +22,8 @@ const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
                     {todayPoem.poem}
                 </pre>
             </>
-            <p>
-                Explore the world of AI-generated poetry.<br>
-                Every day a new poem awaits you!
+            <p class="text-balance">
+                One poem a day, written by an AI in Spanish about code. <br />Every day, a new poem awaits you!
             </p>
                 <p>
                     <em>
@@ -32,7 +31,7 @@ const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
                     </em>
                 </p>
         ) : (
-            <p>No hay poema para hoy. Intenta más tarde.</p>
+            <p>Today's poem hasn't been written yet. Check back soon.</p>
         )
     }
 </div>
