@@ -6,7 +6,7 @@ import { userSocials, userEmail } from "../data/user-contact.json";
 import { userName } from "../data/user-personal.json";
 ---
 
-<Section class="flex flex-row p-2">
+<Section class="flex flex-row items-start gap-3 p-3 sm:p-4">
   <a class="my-auto hover:brightness-125" href="/"><h1>{userName}</h1></a>
 
   <!-- USER CONTACT -->
@@ -26,7 +26,8 @@ import { userName } from "../data/user-personal.json";
   </div>
 
   <a
-    class="ml-auto px-2 text-primary-foreground hover:cursor-pointer hover:brightness-125 md:hidden"
+    class="ml-auto min-w-0 break-all px-2 text-right text-primary-foreground hover:cursor-pointer hover:brightness-125 md:hidden"
+    href={`mailto:${userEmail}`}
   >
     {userEmail}
     <Arrow class="stroke-primary-foreground" rotate={-45} />
@@ -34,8 +35,8 @@ import { userName } from "../data/user-personal.json";
 </Section>
 
 <!-- CREDITS -->
-<Section class="flex flex-row justify-center gap-8 m-auto py-16 text-center">
-  <a class="hover:brightness-125 duration-200"
+<Section class="m-auto flex flex-col items-center justify-center gap-4 px-4 py-12 text-center sm:flex-row sm:gap-8 sm:py-16">
+  <a class="break-words hover:brightness-125 duration-200"
     target="_blank"
     rel="noopener noreferrer"
     href="https://github.com/kadirlofca/backroom"

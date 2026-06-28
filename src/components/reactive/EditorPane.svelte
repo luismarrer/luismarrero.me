@@ -4,5 +4,5 @@
 
 <textarea
     bind:value={value}
-    class="w-full md:w-1/2 h-80 p-4 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white rounded"
+    class="min-h-80 w-full min-w-0 flex-1 resize-y rounded-interactive border border-edge bg-secondary p-4 text-primary-foreground outline-none focus:border-accent md:h-[32rem]"
 ></textarea>

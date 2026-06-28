@@ -43,19 +43,19 @@
 </script>
 
 {#snippet postCard(post: CollectionEntry<'posts'>)}
-    <a href={`/posts/${post.id}`} class="flex flex-col justify-between gap-2 min-h-32 h-full p-2 border rounded-interactive border-edge bg-linear-to-b from-secondary to-secondary/60 pointer-events-auto hover:border-accent duration-200">
-        <div>
+    <a href={`/posts/${post.id}`} class="flex h-full min-h-32 min-w-0 flex-col justify-between gap-2 rounded-interactive border border-edge bg-linear-to-b from-secondary to-secondary/60 p-3 pointer-events-auto duration-200 hover:border-accent">
+        <div class="min-w-0">
             <span class="text-sm text-primary-foreground/75">
                 <time datetime={post.data.date.toISOString()}>
                     {post.data.date.toLocaleDateString('en-us', {year: 'numeric', month: 'short', day: 'numeric'})}
                 </time>
             </span>
-            <h2 class="text-lg font-semibold">{post.data.title}</h2>
-            <p>{post.data.description}</p>
+            <h2 class="break-words text-lg font-semibold">{post.data.title}</h2>
+            <p class="break-words">{post.data.description}</p>
         </div>
-        <div class="flex flex-row gap-2 overflow-hidden text-accent">
+        <div class="flex flex-row flex-wrap gap-x-2 gap-y-1 overflow-hidden text-accent">
             {#each getSortedTags(post) as tag}
-                <span class={($filters.length > 0 && !$filters.includes(tag)) ? "opacity-60" : "font-black"}>{tag}</span>
+                <span class={cn("break-words", ($filters.length > 0 && !$filters.includes(tag)) ? "opacity-60" : "font-black")}>{tag}</span>
             {/each}
         </div>
     </a>
@@ -63,7 +63,7 @@
 
 <Filters />
 
-<div class="group grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 rounded-interactive pointer-events-none hover:border-edge duration-200">					
+<div class="group grid min-w-0 grid-cols-1 gap-3 rounded-interactive p-3 pointer-events-none duration-200 hover:border-edge sm:grid-cols-2 sm:gap-4 sm:p-4 md:grid-cols-3">					
     {#each sortedPosts as post}
         {@render postCard(post)}
     {/each}
