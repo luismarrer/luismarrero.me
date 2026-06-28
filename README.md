@@ -1,4 +1,4 @@
-# Luis Marrero – Personal Website
+# Luis Marrero González – Personal Website
 
 [![Website](https://img.shields.io/badge/site-luismarrero.me-0f172a?style=for-the-badge)](https://www.luismarrero.me/)
 

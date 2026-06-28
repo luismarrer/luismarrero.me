@@ -74,9 +74,9 @@ const cosmeticTexts: { [section: string]: string } = {
         />
       </div>
 
-      <div class="my-auto text-pretty">
+      <div class="my-auto flex flex-col gap-4 text-pretty">
         <h1 class="text-xl">Hi.</h1>
-        <p>{userIntroduction}</p>
+        {userIntroduction.map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </div>
   </Section>
