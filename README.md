@@ -15,6 +15,20 @@ If you're looking for my resume and portfolio, visit [luismarrer.github.io/en](h
 
 - [AI Poems](https://www.luismarrero.me/) — Daily poetry generated using AI API (DeepSeek), automatically committed with GitHub Actions.
 
+#### Working on the poem generator
+
+The Python tools are declared in `pyproject.toml`. Use `uv` locally:
+
+```sh
+uv sync --dev
+uv run python scripts/generate_poem.py
+uv run pytest
+uv run ruff check scripts tests
+uv run ruff format scripts tests
+```
+
+Set `DEEPSEEK_API_KEY` in `.env` for local generation. You can override the model with `DEEPSEEK_MODEL`.
+
 - [Markdown Regex Editor](https://www.luismarrero.me/markdownLive) — A Markdown editor built using Regex. The parser is deployed on Railway.
 
 ## ✅ TODOs

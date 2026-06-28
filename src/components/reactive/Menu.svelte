@@ -1,6 +1,5 @@
 <script lang="ts">
     import { userSocials, userEmail } from "../../data/user-contact.json";
-    import { slide, blur } from "svelte/transition";
 
     let droppedDown: boolean = $state(false);
 
@@ -16,8 +15,8 @@
 </button>
 
 {#if droppedDown}
-<div transition:blur class="fixed inset-0 z-40 flex h-lvh w-screen flex-row backdrop-blur-sm">
-    <div transition:slide={{axis: "x"}} class="flex w-[min(22rem,82vw)] border-r border-accent bg-primary/95">
+<div class="fixed inset-0 z-40 flex h-lvh w-screen flex-row backdrop-blur-sm">
+    <div class="flex w-[min(22rem,82vw)] border-r border-accent bg-primary/95">
         <div class="my-auto ml-auto flex min-w-0 flex-col gap-8 p-6 text-right text-xl sm:p-8 sm:text-2xl">
             <a
             class="break-all hover:brightness-125 duration-200"

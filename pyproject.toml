@@ -1,0 +1,31 @@
+[project]
+name = "luismarrero-site-tools"
+version = "0.1.0"
+description = "Python utilities for luismarrero.me"
+requires-python = ">=3.9"
+dependencies = [
+  "python-dotenv>=1.0.1",
+  "requests>=2.32.3",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3.4",
+  "ruff>=0.9.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["B", "E4", "E7", "E9", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+

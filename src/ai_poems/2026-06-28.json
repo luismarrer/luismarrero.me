@@ -1,6 +1,6 @@
 {
-  "model": "deepseek-reasoner",
+  "model": "fallback",
   "date": "2026-06-28",
-  "title": "El Último Debug",
-  "poem": "Errores en la sombra,\nun puntero perdido,\nla lógica se esconde\ndonde el compilador mide el olvido.\n\nSilencio de bits,\nun paréntesis roto,\ny en la consola el eco\nde un test que nunca falla del todo."
+  "title": "Bitácora del Código",
+  "poem": "La pantalla respira\nsu pulso de cristal,\nuna función despierta\ncon ritmo decimal.\nSi el error se presenta,\nlo escucho sin temor;\ndepuro la pregunta\nhasta encontrar su flor."
 }
