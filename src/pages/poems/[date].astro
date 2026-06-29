@@ -1,0 +1,48 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import Section from "@/components/Section.astro"
+import { getCollection } from "astro:content"
+
+export async function getStaticPaths() {
+    const poems = await getCollection("ai_poems")
+    return poems.map((poem) => ({
+        params: { date: poem.data.date },
+        props: poem.data,
+    }))
+}
+
+const poem = Astro.props
+
+const formattedDate = new Date(`${poem.date}T00:00:00`).toLocaleDateString(
+    "en-us",
+    { year: "numeric", month: "short", day: "numeric" },
+)
+---
+
+<Layout
+    siteTitle={poem.title}
+    siteDescription={`An AI poem in Spanish about code, written on ${poem.date}.`}
+    headerCosmeticText="POEM"
+>
+    <Section class="p-4 sm:p-8">
+        <div class="mx-auto max-w-2xl text-center">
+            <a
+                href="/poems"
+                class="text-sm text-primary-foreground/75 duration-200 hover:text-accent"
+            >
+                ← All poems
+            </a>
+
+            <h1 class="mt-4 text-2xl">{poem.title}</h1>
+
+            <pre class="mx-auto mt-4 max-w-full overflow-x-auto whitespace-pre-wrap break-words p-2 text-left sm:w-fit">{poem.poem}</pre>
+
+            <p class="mt-4">
+                <em class="text-primary-foreground/75">
+                    <time datetime={poem.date}>{formattedDate}</time> — Model:{" "}
+                    {poem.model}
+                </em>
+            </p>
+        </div>
+    </Section>
+</Layout>
