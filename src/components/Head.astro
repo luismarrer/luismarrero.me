@@ -63,3 +63,123 @@ const {
 <meta property="twitter:image" content={new URL(pageThumbnail, Astro.url)} />
 
 <ClientRouter />
+
+<script is:inline>
+  ;(() => {
+    const restoreKey = "lm:scroll-restore"
+    const positionsKey = `${restoreKey}:positions`
+
+    const state = (window[restoreKey] ??= {
+      restoreUrl: "",
+      saveQueued: false,
+      shouldRestore: false,
+      windowListenersAttached: false,
+    })
+
+    if (document[restoreKey]) return
+    document[restoreKey] = true
+
+    const pageKey = (url = window.location.href) => {
+      const { pathname, search } = new URL(url)
+      return `${pathname}${search}`
+    }
+
+    const readPositions = () => {
+      try {
+        return JSON.parse(sessionStorage.getItem(positionsKey) || "{}")
+      } catch {
+        return {}
+      }
+    }
+
+    const savePosition = () => {
+      state.saveQueued = false
+
+      try {
+        const positions = readPositions()
+        positions[pageKey()] = { x: window.scrollX, y: window.scrollY }
+        sessionStorage.setItem(positionsKey, JSON.stringify(positions))
+      } catch {}
+    }
+
+    const queueSavePosition = () => {
+      if (state.saveQueued) return
+
+      state.saveQueued = true
+      requestAnimationFrame(savePosition)
+    }
+
+    const restorePosition = (url) => {
+      const position = readPositions()[pageKey(url)]
+
+      if (!position) return
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo({
+            left: position.x,
+            top: position.y,
+            behavior: "instant",
+          })
+        })
+      })
+    }
+
+    const scheduleRestore = (url) => {
+      state.shouldRestore = true
+      state.restoreUrl = url
+
+      for (const delay of [0, 50, 150, 300, 600, 1000]) {
+        window.setTimeout(() => {
+          if (!state.shouldRestore || state.restoreUrl !== url) return
+
+          restorePosition(url)
+        }, delay)
+      }
+
+      window.setTimeout(() => {
+        if (state.restoreUrl === url) state.shouldRestore = false
+      }, 1200)
+    }
+
+    document.addEventListener("click", (event) => {
+      const link = event.target?.closest?.("a[href]")
+
+      if (!link) return
+
+      const target = link.getAttribute("target")
+      const href = link.getAttribute("href")
+      const url = new URL(href, window.location.href)
+
+      if (
+        link.hasAttribute("download") ||
+        link.dataset.astroReload !== undefined ||
+        (target && target !== "_self") ||
+        url.origin !== window.location.origin
+      ) {
+        return
+      }
+
+      savePosition()
+    })
+
+    document.addEventListener("astro:before-preparation", savePosition)
+
+    document.addEventListener("astro:after-swap", () => {
+      if (!state.shouldRestore) return
+
+      restorePosition(state.restoreUrl)
+    })
+
+    if (state.windowListenersAttached) return
+
+    state.windowListenersAttached = true
+
+    window.addEventListener("scroll", queueSavePosition, { passive: true })
+    window.addEventListener("pagehide", savePosition)
+
+    window.addEventListener("popstate", () => {
+      scheduleRestore(window.location.href)
+    })
+  })()
+</script>

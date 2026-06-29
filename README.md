@@ -34,7 +34,6 @@ Set `DEEPSEEK_API_KEY` in `.env` for local generation. You can override the mode
 ## ✅ TODOs
 
 - [ ] Add more markdown features
-- [ ] Fix newline, tabs and spaces handling in Markdown editor
 
 ---
 
