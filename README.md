@@ -9,6 +9,18 @@ This site is based on a template created by [Kadir Lofca](https://github.com/kad
 
 If you're looking for my resume and portfolio, visit [luismarrer.github.io/en](https://luismarrer.github.io/en/).
 
+## Development
+
+Use pnpm for the Astro site:
+
+```sh
+pnpm install
+pnpm dev
+pnpm build
+```
+
+The Markdown Regex Editor calls `https://markdown-regex.vercel.app/parse` in production. During local development, Astro proxies `/api/markdown-parse` to that endpoint so the browser can avoid localhost CORS issues.
+
 ## 🧪 Experiments
 
 ### Python

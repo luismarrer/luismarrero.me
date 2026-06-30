@@ -16,7 +16,15 @@ Use pnpm, matching the checked-in `pnpm-lock.yaml`.
 - `pnpm preview`: preview the built site locally.
 - `pnpm astro ...`: run Astro CLI commands directly, for example `pnpm astro check` if the check integration is added later.
 
-There is no dedicated test script in this repository yet; run `pnpm build` before submitting changes.
+Python tooling for the poem generator is managed with uv, matching `pyproject.toml` and `uv.lock`.
+
+- `uv sync --dev`: install Python runtime and dev dependencies.
+- `uv run python scripts/generate_poem.py`: generate an AI poem locally.
+- `uv run pytest`: run Python tests.
+- `uv run ruff check scripts tests`: lint Python tools and tests.
+- `uv run ruff format scripts tests`: format Python tools and tests.
+
+There is no dedicated JavaScript test script in this repository yet; run `pnpm build` before submitting site changes.
 
 ## Coding Style & Naming Conventions
 
@@ -26,7 +34,7 @@ Keep data files schema-compatible with `src/content.config.ts`: posts require `t
 
 ## Testing Guidelines
 
-No test framework or coverage threshold is currently configured. For UI or content changes, validate with `pnpm build` and manually check affected pages through `pnpm dev` or `pnpm preview`. If adding tests later, colocate focused tests near the feature or use a clear `tests` directory.
+For UI or content changes, validate with `pnpm build` and manually check affected pages through `pnpm dev` or `pnpm preview`. For Python poem-generator changes, run `uv run pytest` and `uv run ruff check scripts tests`; use `uv run ruff format scripts tests` when formatting is needed. If adding JavaScript tests later, colocate focused tests near the feature or use a clear `tests` directory.
 
 ## Commit & Pull Request Guidelines
 
@@ -36,4 +44,4 @@ Pull requests should describe the change, list validation performed, link relate
 
 ## Security & Configuration Tips
 
-Do not commit secrets or API keys. The Markdown editor calls an external parser endpoint from the client, so treat endpoint changes as user-visible behavior and document them in the PR.
+Do not commit secrets or API keys. Set `DEEPSEEK_API_KEY` in `.env` for local poem generation only. The Markdown editor calls an external parser endpoint from the client in production and uses the local `/api/markdown-parse` dev proxy, so treat endpoint or proxy changes as user-visible behavior and document them in the PR.

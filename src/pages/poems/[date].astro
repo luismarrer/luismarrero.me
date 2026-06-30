@@ -17,6 +17,21 @@ const formattedDate = new Date(`${poem.date}T00:00:00`).toLocaleDateString(
     "en-us",
     { year: "numeric", month: "short", day: "numeric" },
 )
+
+const poemsBackScript = `
+if (
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.altKey &&
+    !event.shiftKey &&
+    window.__lmPoemsReturnPath === "/poems/${poem.date}"
+) {
+    event.preventDefault();
+    event.stopPropagation();
+    history.back();
+}
+`
 ---
 
 <Layout
@@ -27,7 +42,9 @@ const formattedDate = new Date(`${poem.date}T00:00:00`).toLocaleDateString(
     <Section class="p-4 sm:p-8">
         <div class="mx-auto max-w-2xl text-center">
             <a
-                href="/poems"
+                href={`/poems#poem-${poem.date}`}
+                data-poems-back
+                onclick={poemsBackScript}
                 class="text-sm text-primary-foreground/75 duration-200 hover:text-accent"
             >
                 ← All poems
