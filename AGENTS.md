@@ -44,4 +44,4 @@ Pull requests should describe the change, list validation performed, link relate
 
 ## Security & Configuration Tips
 
-Do not commit secrets or API keys. Set `DEEPSEEK_API_KEY` in `.env` for local poem generation only. The Markdown editor calls an external parser endpoint from the client in production and uses the local `/api/markdown-parse` dev proxy, so treat endpoint or proxy changes as user-visible behavior and document them in the PR.
+Do not commit secrets or API keys. Set `DEEPSEEK_API_KEY` in `.env` for local poem generation only. The Markdown editor calls an external parser endpoint from the client in production and uses the local `/api/markdown-parse` dev proxy; by default that proxy targets `http://127.0.0.1:8000`, and `MARKDOWN_PARSER_TARGET` can override it. Treat endpoint or proxy changes as user-visible behavior and document them in the PR.

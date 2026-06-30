@@ -19,7 +19,7 @@ pnpm dev
 pnpm build
 ```
 
-The Markdown Regex Editor calls `https://markdown-regex.vercel.app/parse` in production. During local development, Astro proxies `/api/markdown-parse` to that endpoint so the browser can avoid localhost CORS issues.
+The Markdown Regex Editor calls `https://markdown-regex.vercel.app/parse` in production. During local development, Astro proxies `/api/markdown-parse` to a parser server so the browser can avoid localhost CORS issues. By default it expects the parser repo at `http://127.0.0.1:8000`; set `MARKDOWN_PARSER_TARGET` to point somewhere else.
 
 ## 🧪 Experiments
 
