@@ -38,7 +38,7 @@ const cosmeticTexts: { [section: string]: string } = {
     class="relative flex min-h-72 pl-4 bg-radial-[at_50%_10%] from-accent/10 to-transparent"
   >
     <div class="max-w-md m-auto text-center">
-      <span class="text-2xl">{userProfessionalDescription}</span>
+      <h1 class="text-2xl">{userProfessionalDescription}</h1>
       <Tags client:load tags={heroTags} />
     </div>
     <CosmeticText text={cosmeticTexts.hero} vertical />
@@ -75,7 +75,7 @@ const cosmeticTexts: { [section: string]: string } = {
       </div>
 
       <div class="my-auto flex flex-col gap-4 text-pretty">
-        <h1 class="text-xl">Hi.</h1>
+        <h2 class="text-xl">Hi.</h2>
         {userIntroduction.map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </div>

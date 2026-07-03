@@ -9,6 +9,7 @@ const posts = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     tags: z.string().array(),
+    lang: z.enum(["en", "es"]).default("es"),
   }),
 });
 

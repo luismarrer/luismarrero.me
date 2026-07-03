@@ -38,6 +38,7 @@ if (
     siteTitle={poem.title}
     siteDescription={`An AI poem in Spanish about code, written on ${poem.date}.`}
     headerCosmeticText="POEM"
+    lang="es"
 >
     <Section class="p-4 sm:p-8">
         <div class="mx-auto max-w-2xl text-center">
@@ -52,7 +53,7 @@ if (
 
             <h1 class="mt-4 text-2xl">{poem.title}</h1>
 
-            <pre class="mx-auto mt-4 max-w-full overflow-x-auto whitespace-pre-wrap break-words p-2 text-left sm:w-fit">{poem.poem}</pre>
+            <pre lang="es" class="mx-auto mt-4 max-w-full overflow-x-auto whitespace-pre-wrap break-words p-2 text-left sm:w-fit">{poem.poem}</pre>
 
             <p class="mt-4">
                 <em class="text-primary-foreground/75">

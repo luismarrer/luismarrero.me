@@ -17,7 +17,12 @@
 
 {#snippet tag(title: string)}
     {#if isMounted}
-        <button onclick={() => toggleFilter(title)} class={cn($filters.includes(title) ? "opacity-65" : "", "inline-block w-fit h-fit px-2 py-1 bg-transparent border rounded-interactive border-accent text-accent font-semibold hover:bg-accent hover:text-primary hover:cursor-pointer duration-200")}>
+        <button
+            type="button"
+            aria-pressed={$filters.includes(title)}
+            onclick={() => toggleFilter(title)}
+            class={cn($filters.includes(title) ? "opacity-65" : "", "inline-block w-fit h-fit px-2 py-1 bg-transparent border rounded-interactive border-accent text-accent font-semibold hover:bg-accent hover:text-primary hover:cursor-pointer duration-200")}
+        >
             {title}
         </button>
     {/if}

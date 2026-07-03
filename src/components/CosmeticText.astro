@@ -7,8 +7,10 @@ interface Props {
 const { text, vertical = false } = Astro.props;
 ---
 
-<span style={vertical ? "writing-mode: vertical-lr;" : ""}
-  class="text-edge block px-2 text-xl font-semibold tracking-[0.3em]"
+<span
+  aria-hidden="true"
+  style={vertical ? "writing-mode: vertical-lr;" : ""}
+  class="block px-2 text-xl font-semibold tracking-[0.3em] text-primary-foreground/70"
 >
   {text}
 </span>

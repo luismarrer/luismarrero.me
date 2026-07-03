@@ -51,11 +51,6 @@ Set `DEEPSEEK_API_KEY` in `.env` for local generation. You can override the mode
 - [ ] Revisar la seguridad del Proxy
 - [ ] Añadir tests
 - [ ] Auditar accesibilidad
-- [ ] Revisar warning de fonts
-    ```
-    The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-(index):1 The resource https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-```
 - [ ] Terminar los blogs.
 
 ---
