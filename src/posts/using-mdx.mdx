@@ -1,7 +1,88 @@
 ---
 title: "Using MDX"
 published: true
-description: "Lorem ipsum dolor sit amet"
-tags: ["Tag B", "Tag D"]
-date: "Jun 01 2024"
+description: "Qué es MDX, en qué se diferencia del Markdown normal, y cómo usar componentes y expresiones de JavaScript dentro del contenido en Astro."
+tags: ["MDX", "Astro", "Referencia"]
+date: "Jul 3 2026"
 ---
+
+export const stack = ["Astro", "Svelte", "Tailwind", "MDX"];
+
+MDX es Markdown con superpoderes: todo lo que funciona en un `.md` normal funciona igual, pero además puedes usar JavaScript y componentes directamente en el contenido. Este post es un `.mdx` y se demuestra a sí mismo — algunas cosas que ves aquí abajo no serían posibles en Markdown plano.
+
+## Markdown normal sigue funcionando
+
+**Negritas**, *itálicas*, `código inline`, [enlaces](https://mdxjs.com), listas, tablas... todo lo del [Markdown Style Guide](/posts/markdown-style-guide) aplica igual en MDX. Si un archivo no necesita nada más que eso, no hace falta que sea `.mdx` — con `.md` basta.
+
+## Expresiones de JavaScript
+
+Aquí empieza lo que Markdown plano no puede hacer. En MDX puedes exportar valores en el propio archivo:
+
+```mdx
+export const stack = ["Astro", "Svelte", "Tailwind", "MDX"];
+```
+
+Y usarlos en el contenido con llaves, como en JSX. Esta lista se genera con `stack.map()`:
+
+<ul>
+  {stack.map((item) => <li>{item}</li>)}
+</ul>
+
+También sirven las expresiones inline: dos más dos es {2 + 2}, y este stack tiene {stack.length} piezas.
+
+## Importar componentes
+
+Lo más potente de MDX es importar componentes y usarlos como si fueran etiquetas HTML. En Astro puedes importar componentes `.astro` o de cualquier framework que tengas integrado (en este sitio, Svelte):
+
+```mdx
+---
+title: "Mi post"
+# ...resto del frontmatter
+---
+
+import Aviso from "../components/Aviso.astro";
+import Grafica from "../components/reactive/Grafica.svelte";
+
+<Aviso tipo="warning">Esto renderiza un componente Astro.</Aviso>
+
+<Grafica client:visible datos={[1, 2, 3]} />
+```
+
+Dos detalles importantes:
+
+- Los `import` van después del frontmatter, al principio del cuerpo del archivo.
+- Los componentes de framework (Svelte, React, etc.) necesitan una [directiva `client:`](https://docs.astro.build/en/reference/directives-reference/#client-directives) si quieres que sean interactivos en el navegador — `client:load`, `client:visible`, etc. Sin la directiva, se renderizan como HTML estático.
+
+Los componentes `.astro` no llevan directiva porque siempre se renderizan en el servidor.
+
+## Cuándo usar MDX vs Markdown
+
+Mi regla práctica:
+
+| Situación | Formato |
+|---|---|
+| Texto, código, imágenes, tablas | `.md` |
+| Necesitas un componente interactivo (demo, gráfica, calculadora) | `.mdx` |
+| Contenido generado desde datos (listas, valores calculados) | `.mdx` |
+
+En este sitio, la colección `posts` acepta ambos formatos (`**/*.{md,mdx}` en `src/content.config.ts`), así que la decisión se toma post a post.
+
+## Setup en Astro
+
+Por si mi yo del futuro monta otro proyecto: MDX no viene incluido por defecto en Astro, es una integración oficial que se añade con:
+
+```sh
+pnpm astro add mdx
+```
+
+Eso instala `@astrojs/mdx` y lo registra en `astro.config.mjs`:
+
+```js
+import mdx from "@astrojs/mdx";
+
+export default defineConfig({
+  integrations: [mdx()],
+});
+```
+
+Con eso, cualquier `.mdx` en tus páginas o colecciones de contenido se procesa automáticamente.

@@ -29,7 +29,4 @@ export default defineConfig({
   },
   integrations: [svelte(), mdx(), sitemap()],
   site: siteUrl,
-  redirects: {
-    "/posts": "/", // redirect from /posts because that page doesn't exist.
-  },
 });
