@@ -25,6 +25,26 @@ export interface PostTagPageProps {
   tags: PostTag[];
 }
 
+export interface PostCardData {
+  date: Date;
+  description: string;
+  id: string;
+  lang: string;
+  tags: string[];
+  title: string;
+}
+
+export function toPostCardData(post: PostEntry): PostCardData {
+  return {
+    date: post.data.date,
+    description: post.data.description,
+    id: post.id,
+    lang: post.data.lang,
+    tags: post.data.tags,
+    title: post.data.title,
+  };
+}
+
 export function sortPostsNewestFirst(posts: PostEntry[]): PostEntry[] {
   return [...posts].sort(
     (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
@@ -72,27 +92,6 @@ export function getPostsForTag(posts: PostEntry[], tagSlug: string): PostEntry[]
 export async function getPublishedPosts(): Promise<PostEntry[]> {
   const posts = await getCollection("posts");
   return sortPostsNewestFirst(posts.filter((post) => post.data.published));
-}
-
-export async function getAllPostPages(
-  pageSize = POSTS_PER_PAGE,
-): Promise<PostsPage[]> {
-  const posts = await getPublishedPosts();
-  const totalPages = Math.max(Math.ceil(posts.length / pageSize), 1);
-
-  return Array.from({ length: totalPages }, (_, index) =>
-    getPostsPage(posts, index + 1, "/posts", pageSize),
-  );
-}
-
-export async function getPostArchiveStaticPaths() {
-  const pages = await getAllPostPages();
-  const tags = getPostTags(await getPublishedPosts());
-
-  return pages.slice(1).map((page) => ({
-    params: { page: String(page.currentPage) },
-    props: { page, tags },
-  }));
 }
 
 export async function getPostTagStaticPaths() {
