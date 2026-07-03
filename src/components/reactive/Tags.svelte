@@ -1,24 +1,40 @@
 <script lang="ts">
-    import { getPostTagPath } from '../../lib/post-tags';
+    import { filters, toggleFilter } from '../../stores/filters.store';
+    import { cn } from '../../styles/cn';
 
-    interface Props {
-        tags: string[];
+    interface TagItem {
+        name: string;
+        count?: number;
     }
 
-    const { tags }: Props = $props();
+    interface Props {
+        tags: TagItem[];
+        showCounts?: boolean;
+        class?: string;
+    }
+
+    const { tags, showCounts = false, class: className = '' }: Props = $props();
 </script>
 
-{#snippet tag(title: string)}
-    <a
-        href={getPostTagPath(title)}
-        class="inline-block h-fit w-fit rounded-interactive border border-accent bg-transparent px-2 py-1 font-semibold text-accent duration-200 hover:bg-accent hover:text-primary"
+{#snippet tagButton(item: TagItem)}
+    {@const isActive = $filters.includes(item.name)}
+    <button
+        type="button"
+        aria-pressed={isActive}
+        onclick={() => toggleFilter(item.name)}
+        class={cn(
+            "inline-block h-fit w-fit rounded-interactive border px-2 py-1 font-semibold duration-200 hover:cursor-pointer",
+            isActive
+                ? "border-primary-foreground bg-primary text-primary-foreground"
+                : "border-accent bg-transparent text-accent hover:bg-accent hover:text-primary",
+        )}
     >
-        {title}
-    </a>
+        {item.name}{#if showCounts && item.count !== undefined} <span class="opacity-65">{item.count}</span>{/if}
+    </button>
 {/snippet}
 
-<div class="flex flex-row flex-wrap justify-center gap-2 mt-4 text-lg">
-    {#each tags as title}
-        {@render tag(title)}
+<div class={cn("flex flex-row flex-wrap gap-2", className)}>
+    {#each tags as item}
+        {@render tagButton(item)}
     {/each}
 </div>

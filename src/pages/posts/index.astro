@@ -1,12 +1,13 @@
 ---
 import Layout from "@/layouts/Layout.astro"
 import Section from "@/components/Section.astro"
-import PostArchive from "@/components/PostArchive.astro"
-import { getPostTags, getPostsPage, getPublishedPosts } from "@/lib/posts"
+import Posts from "@/components/reactive/Posts.svelte"
+import Tags from "@/components/reactive/Tags.svelte"
+import { getPostTags, getPublishedPosts, toPostCardData } from "@/lib/posts"
 
 const allPosts = await getPublishedPosts()
-const page = getPostsPage(allPosts, 1)
 const tags = getPostTags(allPosts)
+const posts = allPosts.map(toPostCardData)
 ---
 
 <Layout
@@ -15,11 +16,17 @@ const tags = getPostTags(allPosts)
   headerCosmeticText="POSTS"
 >
   <Section class="p-4 sm:p-8">
-    <PostArchive
-      page={page}
-      tags={tags}
-      title="Posts"
-      description="Technical posts and personal notes."
-    />
+    <div class="mx-auto max-w-6xl">
+      <h1 class="text-2xl">Posts</h1>
+      <p class="mt-2 text-pretty text-primary-foreground/75">
+        Technical posts and personal notes.
+      </p>
+
+      <Tags client:load tags={tags} showCounts class="mt-6 text-sm sm:text-base" />
+
+      <div class="mt-6">
+        <Posts client:load posts={posts} />
+      </div>
+    </div>
   </Section>
 </Layout>

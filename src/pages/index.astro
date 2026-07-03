@@ -4,20 +4,19 @@ import Section from "@/components/Section.astro"
 import Tags from "@/components/reactive/Tags.svelte"
 import CosmeticText from "@/components/CosmeticText.astro"
 import Poems from "@/components/Poems.astro"
-import PostCard from "@/components/PostCard.astro"
+import Posts from "@/components/reactive/Posts.svelte"
 
 import { siteTitle, siteDescription } from "@/data/site.json"
 import { userGithubUsername } from "@/data/user-contact.json"
 import { userProfessionalDescription } from "@/data/user-professional.json"
 import { userIntroduction, userName } from "@/data/user-personal.json"
-import { getPostTags, getPublishedPosts } from "@/lib/posts"
+import { getPostTags, getPublishedPosts, toPostCardData } from "@/lib/posts"
 
 const userPicture = `https://github.com/${userGithubUsername}.png?size=384`
 const allPosts = await getPublishedPosts()
-const featuredPosts = allPosts.slice(0, 6)
-const hasMorePosts = allPosts.length > featuredPosts.length
+const posts = allPosts.map(toPostCardData)
 
-const heroTags = getPostTags(allPosts).map((tag) => tag.name)
+const heroTags = getPostTags(allPosts)
 
 const cosmeticTexts: { [section: string]: string } = {
   header: "BACKROOM",
@@ -37,28 +36,14 @@ const cosmeticTexts: { [section: string]: string } = {
   >
     <div class="max-w-md m-auto text-center">
       <h1 class="text-2xl">{userProfessionalDescription}</h1>
-      <Tags tags={heroTags} />
+      <Tags client:load tags={heroTags} class="justify-center mt-4 text-lg" />
     </div>
     <CosmeticText text={cosmeticTexts.hero} vertical />
   </Section>
 
   <!-- POSTS -->
   <Section class="p-3 sm:p-4">
-    <div class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
-      {featuredPosts.map((post) => <PostCard post={post} />)}
-    </div>
-    {
-      hasMorePosts && (
-        <p class="mt-4 text-center">
-          <a
-            href="/posts"
-            class="inline-block rounded-interactive border border-edge px-4 py-2 duration-200 hover:border-accent hover:text-accent"
-          >
-            Browse all posts
-          </a>
-        </p>
-      )
-    }
+    <Posts client:load posts={posts} />
   </Section>
 
   <!-- AI POEMS -->

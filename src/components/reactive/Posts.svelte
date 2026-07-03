@@ -1,70 +1,83 @@
 <script lang="ts">
-    import { type CollectionEntry } from 'astro:content';
+    import type { PostCardData } from '../../lib/posts';
     import { filters } from '../../stores/filters.store';
     import Filters from './Filters.svelte';
     import { cn } from '../../styles/cn';
 
     interface Props {
-        allPosts: CollectionEntry<'posts'>[];
+        posts: PostCardData[];
     }
 
-    const { allPosts }: Props = $props();
-    let sortedPosts: CollectionEntry<'posts'>[] = $state(allPosts);
+    const { posts }: Props = $props();
 
-    function getIntersectionLength(a: any[], b: any[]): number {
-        const intersection = a.filter(value => b.includes(value));
-        return intersection.length;
+    const dateFormatter = new Intl.DateTimeFormat('en-us', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        timeZone: 'UTC',
+    });
+
+    function getIntersectionLength(a: string[], b: string[]): number {
+        return a.filter((value) => b.includes(value)).length;
     }
 
-    function sortPosts(filters: string[]) {
-        if(!filters || filters.length == 0){
-            sortedPosts = allPosts.sort((a: any, b: any) => b.data.date.valueOf() - a.data.date.valueOf());
-            return;
+    function sortPosts(allPosts: PostCardData[], activeFilters: string[]): PostCardData[] {
+        const byDate = [...allPosts].sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
+        if (activeFilters.length === 0) {
+            return byDate;
         }
-        
-        sortedPosts = allPosts.sort((a: any, b: any) => getIntersectionLength(b.data.tags, filters) - getIntersectionLength(a.data.tags, filters));
+
+        return byDate.sort(
+            (a, b) =>
+                getIntersectionLength(b.tags, activeFilters) -
+                getIntersectionLength(a.tags, activeFilters),
+        );
     }
 
-    filters.subscribe((value) => {
-        sortPosts([...value]);
-    })
-
-    function compareTags(a: string, b: string): number {
-        const includesA: boolean = $filters.includes(a);
-        const includesB: boolean = $filters.includes(b);
-        return includesA && includesB ? 0 : includesA ? -1 : 1; 
+    function getSortedTags(tags: string[], activeFilters: string[]): string[] {
+        return [...tags].sort(
+            (a, b) => Number(activeFilters.includes(b)) - Number(activeFilters.includes(a)),
+        );
     }
 
-    function getSortedTags(post: CollectionEntry<'posts'>): string[] {
-        const sortedTags: string[] = [...post.data.tags];
-        sortedTags.sort((a, b) => compareTags(a, b));
-        return sortedTags;
-    }
+    const sortedPosts = $derived(sortPosts(posts, $filters));
 </script>
 
-{#snippet postCard(post: CollectionEntry<'posts'>)}
-    <a href={`/posts/${post.id}`} lang={post.data.lang} class="flex h-full min-h-32 min-w-0 flex-col justify-between gap-2 rounded-interactive border border-edge bg-linear-to-b from-secondary to-secondary/60 p-3 pointer-events-auto duration-200 hover:border-accent">
-        <div class="min-w-0">
+{#snippet postCard(post: PostCardData)}
+    <article
+        lang={post.lang}
+        class="flex h-full min-h-32 min-w-0 flex-col justify-between gap-2 rounded-interactive border border-edge bg-linear-to-b from-secondary to-secondary/60 p-3 duration-200 hover:border-accent"
+    >
+        <a href={`/posts/${post.id}`} class="min-w-0">
             <span class="text-sm text-primary-foreground/75">
-                <time datetime={post.data.date.toISOString()}>
-                    {post.data.date.toLocaleDateString('en-us', {year: 'numeric', month: 'short', day: 'numeric'})}
-                </time>
+                <time datetime={post.date.toISOString()}>{dateFormatter.format(post.date)}</time>
             </span>
-            <h2 class="break-words text-lg font-semibold">{post.data.title}</h2>
-            <p class="break-words">{post.data.description}</p>
-        </div>
+            <h2 class="break-words text-lg font-semibold">{post.title}</h2>
+            <p class="break-words">{post.description}</p>
+        </a>
+
         <div class="flex flex-row flex-wrap gap-x-2 gap-y-1 overflow-hidden text-accent">
-            {#each getSortedTags(post) as tag}
-                <span class={cn("break-words", ($filters.length > 0 && !$filters.includes(tag)) ? "opacity-60" : "font-black")}>{tag}</span>
+            {#each getSortedTags(post.tags, $filters) as tag}
+                <span
+                    class={cn(
+                        "break-words font-semibold duration-200",
+                        $filters.length > 0 && ($filters.includes(tag) ? "font-black" : "opacity-60"),
+                    )}
+                >
+                    {tag}
+                </span>
             {/each}
         </div>
-    </a>
+    </article>
 {/snippet}
 
-<Filters />
+<div class="flex flex-col gap-4">
+    <Filters />
 
-<div class="group grid min-w-0 grid-cols-1 gap-3 rounded-interactive p-3 pointer-events-none duration-200 hover:border-edge sm:grid-cols-2 sm:gap-4 sm:p-4 md:grid-cols-3">					
-    {#each sortedPosts as post}
-        {@render postCard(post)}
-    {/each}
+    <div class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
+        {#each sortedPosts as post (post.id)}
+            {@render postCard(post)}
+        {/each}
+    </div>
 </div>

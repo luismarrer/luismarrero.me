@@ -18,28 +18,18 @@ const { activeTagSlug, description, page, tags, title } = Astro.props
 const { basePath, currentPage, pageSize, posts, totalPages, totalPosts } = page
 const firstVisiblePost = totalPosts === 0 ? 0 : (currentPage - 1) * pageSize + 1
 const lastVisiblePost = Math.min(currentPage * pageSize, totalPosts)
-const activeTag = tags.find((tag) => tag.slug === activeTagSlug)
 ---
 
-<div
-    class="mx-auto max-w-6xl"
-    data-post-archive
-    data-archive-title={title}
-    data-archive-description={description}
-    data-total-posts={totalPosts}
-    data-active-tag-slug={activeTagSlug ?? ""}
-    data-active-tag-name={activeTag?.name ?? ""}
-    data-client-filter={activeTagSlug || currentPage !== 1 || posts.length !== totalPosts ? "false" : "true"}
->
+<div class="mx-auto max-w-6xl">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <h1 class="text-2xl" data-post-archive-title>{title}</h1>
-            <p class="mt-2 text-pretty text-primary-foreground/75" data-post-archive-description>
+            <h1 class="text-2xl">{title}</h1>
+            <p class="mt-2 text-pretty text-primary-foreground/75">
                 {description}
             </p>
         </div>
 
-        <p class="text-sm text-primary-foreground/65" data-post-archive-count>
+        <p class="text-sm text-primary-foreground/65">
             {firstVisiblePost}-{lastVisiblePost} of {totalPosts}
         </p>
     </div>
@@ -50,7 +40,6 @@ const activeTag = tags.find((tag) => tag.slug === activeTagSlug)
     >
         <a
             href="/posts"
-            data-post-tag-all
             aria-current={activeTagSlug ? undefined : "page"}
             class:list={[
                 "inline-block rounded-interactive border px-2 py-1 font-semibold duration-200 hover:bg-accent hover:text-primary",
@@ -68,8 +57,6 @@ const activeTag = tags.find((tag) => tag.slug === activeTagSlug)
                 return (
                     <a
                         href={tag.path}
-                        data-post-tag-filter={tag.slug}
-                        data-post-tag-name={tag.name}
                         aria-current={isActive ? "page" : undefined}
                         class:list={[
                             "inline-block rounded-interactive border px-2 py-1 font-semibold duration-200 hover:bg-accent hover:text-primary",
@@ -131,148 +118,3 @@ const activeTag = tags.find((tag) => tag.slug === activeTagSlug)
         )
     }
 </div>
-
-<script>
-    const activePillClasses = [
-        "border-primary-foreground",
-        "bg-primary",
-        "text-primary-foreground",
-    ]
-    const inactivePillClasses = ["border-accent", "text-accent"]
-
-    function setClasses(element: HTMLElement, classes: string[], shouldAdd: boolean) {
-        element.classList.toggle(classes[0], shouldAdd)
-        for (const className of classes.slice(1)) {
-            element.classList.toggle(className, shouldAdd)
-        }
-    }
-
-    function formatVisibleCount(visibleCount: number, totalPosts: number) {
-        if (visibleCount === totalPosts) {
-            return totalPosts === 0 ? "0 of 0" : `1-${totalPosts} of ${totalPosts}`
-        }
-
-        return `${visibleCount} of ${totalPosts}`
-    }
-
-    function setupPostArchiveFilters() {
-        for (const archive of document.querySelectorAll<HTMLElement>("[data-post-archive]")) {
-            if (archive.dataset.filtersReady === "true") {
-                continue
-            }
-
-            archive.dataset.filtersReady = "true"
-
-            if (archive.dataset.clientFilter !== "true") {
-                continue
-            }
-
-            const cards = Array.from(archive.querySelectorAll<HTMLElement>("[data-post-card]"))
-            const links = Array.from(archive.querySelectorAll<HTMLAnchorElement>("[data-post-tag-filter]"))
-            const allLink = archive.querySelector<HTMLAnchorElement>("[data-post-tag-all]")
-            const title = archive.querySelector<HTMLElement>("[data-post-archive-title]")
-            const description = archive.querySelector<HTMLElement>("[data-post-archive-description]")
-            const count = archive.querySelector<HTMLElement>("[data-post-archive-count]")
-            const pagination = archive.querySelector<HTMLElement>("[aria-label='Post archive pagination']")
-            const originalTitle = archive.dataset.archiveTitle ?? "Posts"
-            const originalDescription = archive.dataset.archiveDescription ?? ""
-            const totalPosts = Number(archive.dataset.totalPosts ?? cards.length)
-
-            function render(activeSlug = "", activeName = "") {
-                let visibleCount = 0
-
-                for (const card of cards) {
-                    const tagSlugs = card.dataset.postTags?.split(" ") ?? []
-                    const isVisible = !activeSlug || tagSlugs.includes(activeSlug)
-
-                    card.hidden = !isVisible
-                    card.classList.toggle("opacity-35", Boolean(activeSlug) && !isVisible)
-                    if (isVisible) {
-                        visibleCount += 1
-                    }
-                }
-
-                for (const link of links) {
-                    const isActive = link.dataset.postTagFilter === activeSlug
-
-                    link.setAttribute("aria-current", isActive ? "page" : "false")
-                    setClasses(link, activePillClasses, isActive)
-                    setClasses(link, inactivePillClasses, !isActive)
-                    link.classList.toggle("font-black", isActive)
-                }
-
-                if (allLink) {
-                    allLink.setAttribute("aria-current", activeSlug ? "false" : "page")
-                    setClasses(allLink, activePillClasses, !activeSlug)
-                    setClasses(allLink, inactivePillClasses, Boolean(activeSlug))
-                }
-
-                if (title) {
-                    title.textContent = activeSlug && activeName ? `Posts tagged ${activeName}` : originalTitle
-                }
-
-                if (description) {
-                    description.textContent =
-                        activeSlug && activeName
-                            ? `Technical posts and personal notes tagged ${activeName}.`
-                            : originalDescription
-                }
-
-                if (count) {
-                    count.textContent = formatVisibleCount(visibleCount, totalPosts)
-                }
-
-                pagination?.classList.toggle("hidden", Boolean(activeSlug))
-                archive.dataset.activeTagSlug = activeSlug
-                archive.dataset.activeTagName = activeName
-            }
-
-            function activateFromLink(link: HTMLAnchorElement, event: MouseEvent) {
-                if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
-                    return
-                }
-
-                event.preventDefault()
-
-                const activeSlug = link.dataset.postTagFilter ?? ""
-                const activeName = link.dataset.postTagName ?? link.textContent?.trim() ?? ""
-
-                render(activeSlug, activeName)
-                window.history.pushState({ postTag: activeSlug }, "", link.href)
-            }
-
-            for (const link of links) {
-                link.addEventListener("click", (event) => activateFromLink(link, event))
-            }
-
-            allLink?.addEventListener("click", (event) => {
-                if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
-                    return
-                }
-
-                event.preventDefault()
-                render()
-                window.history.pushState({ postTag: "" }, "", allLink.href)
-            })
-
-            window.addEventListener("popstate", () => {
-                const matchingLink = links.find((link) => link.href === window.location.href)
-
-                if (matchingLink) {
-                    render(
-                        matchingLink.dataset.postTagFilter ?? "",
-                        matchingLink.dataset.postTagName ?? matchingLink.textContent?.trim() ?? "",
-                    )
-                    return
-                }
-
-                render()
-            })
-
-            render(archive.dataset.activeTagSlug, archive.dataset.activeTagName)
-        }
-    }
-
-    setupPostArchiveFilters()
-    document.addEventListener("astro:page-load", setupPostArchiveFilters)
-</script>
