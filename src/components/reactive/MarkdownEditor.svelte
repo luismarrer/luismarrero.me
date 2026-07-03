@@ -3,6 +3,7 @@
   import PreviewPane from "@/components/reactive/PreviewPane.svelte";
   import { onMount } from "svelte";
   import { debounce } from "ts-debounce";
+  import DOMPurify from "dompurify";
 
   let text = "# Hola\n## mundo\n_Esto_ **es** *markdown*\n\n";
   let html = "";
@@ -23,7 +24,9 @@
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const { html: parsed } = await res.json();
-      html = parsed;
+      // The parser escapes raw HTML itself, but sanitize here anyway so a
+      // parser bug can't turn into XSS on this site.
+      html = DOMPurify.sanitize(parsed);
     } catch (err) {
       console.error("Parse failed:", err);
       html = `<p class="text-red-500">No se pudo convertir el Markdown.</p>`;

@@ -19,10 +19,12 @@ export default defineConfig({
       // (same-origin) to avoid the browser blocking them. By default this
       // points at the local parser repo so parser changes can be tested here.
       proxy: {
-        "/api/markdown-parse": {
+        // ^...$ (allowing only a query string) so subpaths like
+        // /api/markdown-parse/../x are not forwarded to the parser.
+        "^/api/markdown-parse(\\?.*)?$": {
           target: markdownParserTarget,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/markdown-parse/, "/parse"),
+          rewrite: () => "/parse",
         },
       },
     },

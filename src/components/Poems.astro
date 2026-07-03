@@ -17,8 +17,8 @@ const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
     {
         todayPoem ? (
             <>
-                <h3 class="text-xl">{todayPoem.title}</h3>
-                <pre class="mx-auto max-w-full overflow-x-auto whitespace-pre-wrap break-words p-2 text-left sm:w-fit">{todayPoem.poem}</pre>
+                <h3 class="text-xl" lang="es">{todayPoem.title}</h3>
+                <pre lang="es" class="mx-auto max-w-full overflow-x-auto whitespace-pre-wrap break-words p-2 text-left sm:w-fit">{todayPoem.poem}</pre>
                 <p class="text-balance">
                     One poem a day, written by an AI in Spanish about code. <br />Every day, a new poem awaits you!
                 </p>

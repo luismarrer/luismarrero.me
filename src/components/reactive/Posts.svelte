@@ -43,7 +43,7 @@
 </script>
 
 {#snippet postCard(post: CollectionEntry<'posts'>)}
-    <a href={`/posts/${post.id}`} class="flex h-full min-h-32 min-w-0 flex-col justify-between gap-2 rounded-interactive border border-edge bg-linear-to-b from-secondary to-secondary/60 p-3 pointer-events-auto duration-200 hover:border-accent">
+    <a href={`/posts/${post.id}`} lang={post.data.lang} class="flex h-full min-h-32 min-w-0 flex-col justify-between gap-2 rounded-interactive border border-edge bg-linear-to-b from-secondary to-secondary/60 p-3 pointer-events-auto duration-200 hover:border-accent">
         <div class="min-w-0">
             <span class="text-sm text-primary-foreground/75">
                 <time datetime={post.data.date.toISOString()}>
