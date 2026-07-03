@@ -2,13 +2,15 @@
 import Layout from "@/layouts/Layout.astro"
 import Section from "@/components/Section.astro"
 import PoemArchive from "@/components/PoemArchive.astro"
-import { getAllPoems, getPoemsPage } from "@/lib/poems"
+import { getPoemArchiveStaticPaths, type PoemsPage } from "@/lib/poems"
 
-const page = getPoemsPage(await getAllPoems(), 1)
+export const getStaticPaths = getPoemArchiveStaticPaths
+
+const page = Astro.props as PoemsPage
 ---
 
 <Layout
-    siteTitle="AI Poems"
+    siteTitle={`AI Poems - Page ${page.currentPage}`}
     siteDescription="A daily poem written by an AI in Spanish about code."
     headerCosmeticText="POEMS"
 >

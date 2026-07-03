@@ -1,0 +1,29 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import Section from "@/components/Section.astro"
+import PostArchive from "@/components/PostArchive.astro"
+import {
+  getPostTagArchiveStaticPaths,
+  type PostTagPageProps,
+} from "@/lib/posts"
+
+export const getStaticPaths = getPostTagArchiveStaticPaths
+
+const { page, tag, tags } = Astro.props as PostTagPageProps
+---
+
+<Layout
+  siteTitle={`Posts tagged ${tag.name} - Page ${page.currentPage}`}
+  siteDescription={`Posts tagged ${tag.name} by Luis Marrero.`}
+  headerCosmeticText="POSTS"
+>
+  <Section class="p-4 sm:p-8">
+    <PostArchive
+      page={page}
+      tags={tags}
+      activeTagSlug={tag.slug}
+      title={`Posts tagged ${tag.name}`}
+      description={`Technical posts and personal notes tagged ${tag.name}.`}
+    />
+  </Section>
+</Layout>

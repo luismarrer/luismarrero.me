@@ -1,31 +1,20 @@
 <script lang="ts">
-    import { filters, toggleFilter } from '../../stores/filters.store.ts';
-    import { onMount } from "svelte";
-    import { cn } from '../../styles/cn.ts';
+    import { getPostTagPath } from '../../lib/post-tags';
 
     interface Props {
         tags: string[];
     }
 
     const { tags }: Props = $props();
-    let isMounted: boolean = $state(false);
-
-    onMount(() => {
-        isMounted = true;
-    })
 </script>
 
 {#snippet tag(title: string)}
-    {#if isMounted}
-        <button
-            type="button"
-            aria-pressed={$filters.includes(title)}
-            onclick={() => toggleFilter(title)}
-            class={cn($filters.includes(title) ? "opacity-65" : "", "inline-block w-fit h-fit px-2 py-1 bg-transparent border rounded-interactive border-accent text-accent font-semibold hover:bg-accent hover:text-primary hover:cursor-pointer duration-200")}
-        >
-            {title}
-        </button>
-    {/if}
+    <a
+        href={getPostTagPath(title)}
+        class="inline-block h-fit w-fit rounded-interactive border border-accent bg-transparent px-2 py-1 font-semibold text-accent duration-200 hover:bg-accent hover:text-primary"
+    >
+        {title}
+    </a>
 {/snippet}
 
 <div class="flex flex-row flex-wrap justify-center gap-2 mt-4 text-lg">

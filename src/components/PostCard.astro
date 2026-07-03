@@ -1,0 +1,51 @@
+---
+import {
+    formatPostDate,
+    type PostEntry,
+} from "@/lib/posts"
+import { getPostTagPath, slugifyTag } from "@/lib/post-tags"
+
+interface Props {
+    activeTagSlug?: string
+    post: PostEntry
+}
+
+const { activeTagSlug, post } = Astro.props
+---
+
+<article
+    lang={post.data.lang}
+    class="flex h-full min-h-32 min-w-0 flex-col justify-between gap-2 rounded-interactive border border-edge bg-linear-to-b from-secondary to-secondary/60 p-3 duration-200 hover:border-accent"
+>
+    <a href={`/posts/${post.id}`} class="min-w-0">
+        <span class="text-sm text-primary-foreground/75">
+            <time datetime={post.data.date.toISOString()}>
+                {formatPostDate(post.data.date)}
+            </time>
+        </span>
+        <h2 class="break-words text-lg font-semibold">{post.data.title}</h2>
+        <p class="break-words">{post.data.description}</p>
+    </a>
+
+    <div class="flex flex-row flex-wrap gap-x-2 gap-y-1 overflow-hidden text-accent">
+        {
+            post.data.tags.map((tag) => {
+                const tagSlug = slugifyTag(tag)
+                const isActive = activeTagSlug === tagSlug
+
+                return (
+                    <a
+                        href={getPostTagPath(tag)}
+                        aria-current={isActive ? "page" : undefined}
+                        class:list={[
+                            "break-words duration-200 hover:text-primary-foreground",
+                            isActive ? "font-black" : "font-semibold",
+                        ]}
+                    >
+                        {tag}
+                    </a>
+                )
+            })
+        }
+    </div>
+</article>

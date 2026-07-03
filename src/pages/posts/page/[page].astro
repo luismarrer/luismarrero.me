@@ -2,15 +2,24 @@
 import Layout from "@/layouts/Layout.astro"
 import Section from "@/components/Section.astro"
 import PostArchive from "@/components/PostArchive.astro"
-import { getPostTags, getPostsPage, getPublishedPosts } from "@/lib/posts"
+import {
+  getPostArchiveStaticPaths,
+  type PostsPage,
+} from "@/lib/posts"
+import type { PostTag } from "@/lib/post-tags"
 
-const allPosts = await getPublishedPosts()
-const page = getPostsPage(allPosts, 1)
-const tags = getPostTags(allPosts)
+export const getStaticPaths = getPostArchiveStaticPaths
+
+interface Props {
+  page: PostsPage
+  tags: PostTag[]
+}
+
+const { page, tags } = Astro.props
 ---
 
 <Layout
-  siteTitle="Posts"
+  siteTitle={`Posts - Page ${page.currentPage}`}
   siteDescription="Technical posts and personal notes by Luis Marrero."
   headerCosmeticText="POSTS"
 >
