@@ -11,10 +11,13 @@ interface Props {
 }
 
 const { activeTagSlug, post } = Astro.props
+const postTagSlugs = post.data.tags.map((tag) => slugifyTag(tag))
 ---
 
 <article
     lang={post.data.lang}
+    data-post-card
+    data-post-tags={postTagSlugs.join(" ")}
     class="flex h-full min-h-32 min-w-0 flex-col justify-between gap-2 rounded-interactive border border-edge bg-linear-to-b from-secondary to-secondary/60 p-3 duration-200 hover:border-accent"
 >
     <a href={`/posts/${post.id}`} class="min-w-0">
@@ -36,6 +39,7 @@ const { activeTagSlug, post } = Astro.props
                 return (
                     <a
                         href={getPostTagPath(tag)}
+                        data-post-tag-filter={tagSlug}
                         aria-current={isActive ? "page" : undefined}
                         class:list={[
                             "break-words duration-200 hover:text-primary-foreground",
