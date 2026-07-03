@@ -11,15 +11,14 @@ export function addFilter(filter: string) {
 }
 
 export function removeFilter(filter: string) {
-  let mutableFilters: string[] = filters.get();
-  const indexToRemove: number = mutableFilters.indexOf(filter, 0);
+  const currentFilters: string[] = filters.get();
+  const indexToRemove: number = currentFilters.indexOf(filter, 0);
 
   if (indexToRemove < 0) {
     return;
   }
 
-  mutableFilters.splice(indexToRemove, 1);
-  filters.set([...mutableFilters]);
+  filters.set(currentFilters.filter((currentFilter) => currentFilter !== filter));
 }
 
 export function toggleFilter(filter: string) {
