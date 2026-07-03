@@ -48,7 +48,6 @@ Set `DEEPSEEK_API_KEY` in `.env` for local generation. You can override the mode
 - [ ] Mejorar poeta, mostrar costo? Hacerlo más barato? Hacerlo más diverso, no repita titulos, que aprenda de poemas anteriores?
 - [ ] Terminar los blogs.
 - [ ] Mejorar SEO, que aparezca en Google.
-- [ ] Auditar Performance de la web.
 - [ ] Estudiar Favicon de la web
 
 ---
