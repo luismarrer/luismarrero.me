@@ -45,13 +45,11 @@ Set `DEEPSEEK_API_KEY` in `.env` for local generation. You can override the mode
 
 ## ✅ TODOs
 
-- [X] Arreglar la arquitectura de los poemas. Para que no explote.
-- [X] Hacer paginación en los poemas y posts, con tags por ruta.
 - [ ] Mejorar poeta, mostrar costo? Hacerlo más barato? Hacerlo más diverso, no repita titulos, que aprenda de poemas anteriores?
 - [ ] Terminar los blogs.
-- [X] Eliminar boton de ver todos los poemas
 - [ ] Mejorar SEO, que aparezca en Google.
 - [ ] Auditar Performance de la web.
+- [ ] Estudiar Favicon de la web
 
 ---
 

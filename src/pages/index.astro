@@ -7,12 +7,12 @@ import Poems from "@/components/Poems.astro"
 import PostCard from "@/components/PostCard.astro"
 
 import { siteTitle, siteDescription } from "@/data/site.json"
+import { userGithubUsername } from "@/data/user-contact.json"
 import { userProfessionalDescription } from "@/data/user-professional.json"
 import { userIntroduction, userName } from "@/data/user-personal.json"
-// import userPicture from "public/user-picture.jpeg"
-const userPicture = "https://avatars.githubusercontent.com/u/144063514?v=4"
 import { getPostTags, getPublishedPosts } from "@/lib/posts"
 
+const userPicture = `https://github.com/${userGithubUsername}.png?size=384`
 const allPosts = await getPublishedPosts()
 const featuredPosts = allPosts.slice(0, 6)
 const hasMorePosts = allPosts.length > featuredPosts.length
@@ -82,6 +82,10 @@ const cosmeticTexts: { [section: string]: string } = {
         <img
           class="h-48 w-48 scale-110 -rotate-z-12 overflow-clip object-cover rounded-interactive group-hover/image:scale-[101%] group-hover/image:-rotate-z-0 duration-200"
           src={userPicture}
+          width="384"
+          height="384"
+          loading="lazy"
+          decoding="async"
           alt={`${userName}'s profile picture.`}
         />
       </div>

@@ -7,6 +7,8 @@
 
   let text = "# Hola\n## mundo\n_Esto_ **es** *markdown*\n\n";
   let html = "";
+  let browserReady = false;
+  let lastParsedText = "";
 
   // In production we call the parser directly (its CORS allows that origin).
   // In dev the request is proxied through the Astro dev server (see
@@ -16,6 +18,8 @@
     : "https://markdown-regex.vercel.app/parse";
 
   async function parse() {
+    lastParsedText = text;
+
     try {
       const res = await fetch(PARSE_URL, {
         method: "POST",
@@ -33,9 +37,12 @@
     }
   }
 
-  onMount(() => parse());                 // primera carga
+  onMount(() => {
+    parse();
+    browserReady = true;
+  });                 // primera carga
   const parseDebounced = debounce(parse, 300);
-  $: text && parseDebounced();            // solo cuando cambia `text`
+  $: browserReady && text !== lastParsedText && parseDebounced();            // solo cuando cambia `text`
 </script>
 
 

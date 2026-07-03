@@ -1,0 +1,148 @@
+---
+import { userSocials, userEmail } from "@/data/user-contact.json"
+---
+
+<div data-mobile-contact-menu class="ml-auto my-auto shrink-0 md:hidden">
+    <button
+        data-menu-button
+        type="button"
+        class="cursor-pointer hover:brightness-125"
+        aria-label="Open contact menu"
+        aria-expanded="false"
+        aria-controls="mobile-contact-menu"
+        aria-haspopup="dialog"
+    >
+        <svg
+            aria-hidden="true"
+            class="h-8 w-8 stroke-accent"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M3 5H21 M3 12H21 M3 19H21"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+        </svg>
+    </button>
+
+    <div
+        data-menu-dialog
+        id="mobile-contact-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Contact menu"
+        class="fixed inset-0 z-40 flex h-lvh w-screen flex-row backdrop-blur-sm"
+        hidden
+    >
+        <div class="flex w-[min(22rem,82vw)] border-r border-accent bg-primary/95">
+            <div
+                class="my-auto ml-auto flex min-w-0 flex-col gap-8 p-6 text-right text-xl sm:p-8 sm:text-2xl"
+            >
+                <a
+                    data-menu-first
+                    class="break-all duration-200 hover:brightness-125"
+                    href={`mailto:${userEmail}`}>{userEmail}</a
+                >
+                {
+                    userSocials.map((social) => (
+                        <a class="duration-200 hover:brightness-125" href={social.link}>
+                            {social.title}
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+        <button
+            data-menu-close
+            type="button"
+            tabindex="-1"
+            class="flex-1"
+            aria-label="Close contact menu"
+        >
+        </button>
+    </div>
+</div>
+
+<script>
+    const menus = document.querySelectorAll("[data-mobile-contact-menu]")
+
+    for (const menu of menus) {
+        const button = menu.querySelector("[data-menu-button]")
+        const dialog = menu.querySelector("[data-menu-dialog]")
+        const firstLink = menu.querySelector("[data-menu-first]")
+        const closeButtons = menu.querySelectorAll("[data-menu-close]")
+
+        if (!(button instanceof HTMLButtonElement) || !(dialog instanceof HTMLElement)) {
+            continue
+        }
+
+        let previousFocus = null
+
+        function focusFirstMenuItem() {
+            if (firstLink instanceof HTMLElement) {
+                firstLink.focus()
+                return
+            }
+
+            const firstFocusable = dialog.querySelector("a[href], button:not([disabled])")
+            if (firstFocusable instanceof HTMLElement) {
+                firstFocusable.focus()
+            }
+        }
+
+        function setOpen(isOpen) {
+            button.setAttribute("aria-expanded", String(isOpen))
+            dialog.hidden = !isOpen
+            document.body.style.overflow = isOpen ? "hidden" : ""
+
+            if (isOpen) {
+                previousFocus =
+                    document.activeElement instanceof HTMLElement
+                        ? document.activeElement
+                        : null
+                focusFirstMenuItem()
+                return
+            }
+
+            if (previousFocus instanceof HTMLElement) {
+                previousFocus.focus()
+            } else {
+                button.focus()
+            }
+        }
+
+        button.addEventListener("click", () => setOpen(dialog.hidden))
+
+        for (const closeButton of closeButtons) {
+            closeButton.addEventListener("click", () => setOpen(false))
+        }
+
+        dialog.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                event.preventDefault()
+                setOpen(false)
+                return
+            }
+
+            if (event.key !== "Tab") return
+
+            const focusable = Array.from(
+                dialog.querySelectorAll("a[href], button:not([disabled])"),
+            ).filter((element) => element instanceof HTMLElement && element.tabIndex !== -1)
+
+            if (focusable.length === 0) return
+
+            const first = focusable[0]
+            const last = focusable[focusable.length - 1]
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault()
+                last.focus()
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault()
+                first.focus()
+            }
+        })
+    }
+</script>
