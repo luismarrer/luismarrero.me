@@ -1,22 +1,13 @@
 ---
 import Layout from "@/layouts/Layout.astro"
 import Section from "@/components/Section.astro"
-import { getCollection } from "astro:content"
+import { formatPoemDate, getPoemStaticPaths } from "@/lib/poems"
 
-export async function getStaticPaths() {
-    const poems = await getCollection("ai_poems")
-    return poems.map((poem) => ({
-        params: { date: poem.data.date },
-        props: poem.data,
-    }))
-}
+export const getStaticPaths = getPoemStaticPaths
 
 const poem = Astro.props
 
-const formattedDate = new Date(`${poem.date}T00:00:00`).toLocaleDateString(
-    "en-us",
-    { year: "numeric", month: "short", day: "numeric" },
-)
+const formattedDate = formatPoemDate(poem.date)
 
 const poemsBackScript = `
 if (

@@ -1,15 +1,7 @@
 ---
-import { getCollection } from "astro:content"
+import { getTodayPoem } from "@/lib/poems";
 
-// Puerto Rico is UTC-4, so we need to adjust the date accordingly
-// We will use a fixed offset of -4 hours to simulate the local time
-const offsetMin = -4 * 60
-const prDateToday = new Date(Date.now() + offsetMin * 60_000)
-    .toISOString()
-    .slice(0, 10) // YYYY-MM-DD
-
-const ai_poems = await getCollection("ai_poems")
-const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
+const todayPoem = await getTodayPoem();
 ---
 
 <h2 class="text-2xl">AI Poems</h2>
@@ -17,10 +9,19 @@ const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
     {
         todayPoem ? (
             <>
-                <h3 class="text-xl" lang="es">{todayPoem.title}</h3>
-                <pre lang="es" class="mx-auto max-w-full overflow-x-auto whitespace-pre-wrap break-words p-2 text-left sm:w-fit">{todayPoem.poem}</pre>
+                <h3 class="text-xl" lang="es">
+                    {todayPoem.title}
+                </h3>
+                <pre
+                    lang="es"
+                    class="mx-auto max-w-full overflow-x-auto whitespace-pre-wrap break-words p-2 text-left sm:w-fit"
+                >
+                    {todayPoem.poem}
+                </pre>
                 <p class="text-balance">
-                    One poem a day, written by an AI in Spanish about code. <br />Every day, a new poem awaits you!
+                    One poem a day, written by an AI in Spanish about code.{" "}
+                    <br />
+                    Every day, a new poem awaits you!
                 </p>
                 <p>
                     <em>
@@ -32,13 +33,4 @@ const todayPoem = ai_poems.find((p) => p.data.date === prDateToday)?.data
             <p>Today's poem hasn't been written yet. Check back soon.</p>
         )
     }
-
-    <p class="mt-6">
-        <a
-            href="/poems"
-            class="inline-block rounded-interactive border border-edge px-4 py-2 duration-200 hover:border-accent hover:text-accent"
-        >
-            Browse all poems →
-        </a>
-    </p>
 </div>

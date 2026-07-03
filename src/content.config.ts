@@ -1,6 +1,8 @@
 import { glob } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
 
+import { isDateOnlyString } from "./lib/date";
+
 const posts = defineCollection({
   loader: glob({ base: "src/posts", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
@@ -16,10 +18,15 @@ const posts = defineCollection({
 const ai_poems = defineCollection({
   loader: glob({ base: "src/ai_poems", pattern: "**/*.json" }),
   schema: z.object({
-    model: z.string(),
-    title: z.string(),
-    date: z.string(), // or z.date() if you use Date objects
-    poem: z.string(),
+    model: z.string().refine((value) => value.trim().length > 0),
+    title: z.string().refine((value) => value.trim().length > 0),
+    date: z
+      .string()
+      .refine(
+        isDateOnlyString,
+        "AI poem dates must be real YYYY-MM-DD date-only strings",
+      ),
+    poem: z.string().refine((value) => value.trim().length > 0),
   }),
 });
 
