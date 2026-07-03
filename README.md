@@ -45,13 +45,14 @@ Set `DEEPSEEK_API_KEY` in `.env` for local generation. You can override the mode
 
 ## ✅ TODOs
 
-- [ ] Añadir luismarrer.github.io/en en la web
+- [X] Añadir luismarrer.github.io/en en la web
 - [ ] Arreglar la arquitectura de los poemas. Para que no explote.
 - [ ] Hacer paginación en los poemas. Quizás tambien en los posts.
-- [ ] Revisar la seguridad del Proxy
-- [ ] Añadir tests
-- [ ] Auditar accesibilidad
+- [ ] Mejorar poeta, mostrar costo? Hacerlo más barato? Hacerlo más diverso, no repita titulos, que aprenda de poemas anteriores?
+- [X] Añadir tests
 - [ ] Terminar los blogs.
+- [ ] Eliminar boton de ver todos los poemas
+- [ ] Mejorar SEO, que aparezca en Google.
 
 ---
 
