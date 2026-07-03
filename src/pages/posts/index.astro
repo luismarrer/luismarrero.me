@@ -1,0 +1,29 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import Section from "@/components/Section.astro"
+import Posts from "@/components/reactive/Posts.svelte"
+import { getCollection } from "astro:content"
+
+const allPosts = (await getCollection("posts")).filter(
+  (post) => post.data.published,
+)
+---
+
+<Layout
+  siteTitle="Posts"
+  siteDescription="Technical posts and personal notes by Luis Marrero."
+  headerCosmeticText="POSTS"
+>
+  <Section class="p-4 sm:p-8">
+    <div class="mx-auto max-w-6xl">
+      <h1 class="text-2xl">Posts</h1>
+      <p class="mt-2 text-pretty text-primary-foreground/75">
+        Technical posts and personal notes.
+      </p>
+
+      <div class="mt-6">
+        <Posts client:load allPosts={allPosts} />
+      </div>
+    </div>
+  </Section>
+</Layout>
