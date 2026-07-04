@@ -1,0 +1,44 @@
+name: Monitor DeepSeek
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 11 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    env:
+      CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+      CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
+      DEEPSEEK_MONITOR_TARGETS: ${{ vars.DEEPSEEK_MONITOR_TARGETS }}
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install uv
+        run: python -m pip install uv
+
+      - name: Install dependencies
+        run: uv sync --frozen --no-dev
+
+      - name: Monitor DeepSeek docs and configured sources
+        run: uv run python scripts/deepseek_monitor.py
+
+      - name: Commit monitor state
+        run: |
+          git config user.name "DeepSeekMonitor"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/deepseek-monitor-state.json
+          git commit -m "Update DeepSeek monitor state" || echo "No monitor state changes to commit"
+          git push

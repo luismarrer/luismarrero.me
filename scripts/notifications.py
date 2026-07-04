@@ -86,6 +86,9 @@ def format_generation_status(generation: Any) -> str:
     if generation.fallback_reason == "repeated_titles":
         return "FALLBACK: DeepSeek repitio titulos y se publico el poema fallback."
 
+    if generation.fallback_reason == "peak_pricing_window":
+        return "FALLBACK: ventana pico de DeepSeek; se evito usar el API."
+
     return "FALLBACK: DeepSeek no genero poema y se publico el poema fallback."
 
 
