@@ -24,11 +24,19 @@ MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash")
 TEMPERATURE = 0.8
 MAX_TOKENS = int(os.getenv("DEEPSEEK_MAX_TOKENS", "320"))
 MAX_ATTEMPTS = int(os.getenv("DEEPSEEK_MAX_ATTEMPTS", "3"))
+AVOID_PEAK_PRICING = os.getenv("DEEPSEEK_AVOID_PEAK_PRICING", "true").lower() not in {
+    "0",
+    "false",
+    "no",
+}
 MEMORY_RECENT_LIMIT = int(os.getenv("POEM_MEMORY_RECENT_LIMIT", "24"))
 MEMORY_DUPLICATE_LIMIT = int(os.getenv("POEM_MEMORY_DUPLICATE_LIMIT", "16"))
 MEMORY_KEYWORD_LIMIT = int(os.getenv("POEM_MEMORY_KEYWORD_LIMIT", "24"))
 MEMORY_TITLE_LIMIT = int(os.getenv("POEM_MEMORY_TITLE_LIMIT", "160"))
 PUERTO_RICO_TZ = timezone(timedelta(hours=-4))
+BEIJING_TZ = timezone(timedelta(hours=8))
+DEEPSEEK_PEAK_WINDOWS_BEIJING = ((9, 12), (14, 18))
+NON_THINKING_CONFIG = {"type": "disabled"}
 OUTPUT_DIR = Path("src/ai_poems")
 
 
@@ -144,6 +152,21 @@ class PoemGeneration:
     result: DeepSeekResult | None
     fallback_reason: str | None
     rejected_titles: list[str]
+
+
+def is_deepseek_peak_pricing_time(now: datetime | None = None) -> bool:
+    checked_at = now or datetime.now(timezone.utc)
+    beijing_now = checked_at.astimezone(BEIJING_TZ)
+    current_minutes = beijing_now.hour * 60 + beijing_now.minute
+
+    return any(
+        (start_hour * 60) <= current_minutes < (end_hour * 60)
+        for start_hour, end_hour in DEEPSEEK_PEAK_WINDOWS_BEIJING
+    )
+
+
+def should_skip_deepseek_for_peak_pricing(now: datetime | None = None) -> bool:
+    return AVOID_PEAK_PRICING and is_deepseek_peak_pricing_time(now)
 
 
 def normalize_title(title: str) -> str:
@@ -377,7 +400,7 @@ class DeepSeekAPI:
             "messages": [{"role": "user", "content": prompt}],
             "temperature": temperature,
             "max_tokens": max_tokens,
-            "thinking": {"type": "disabled"},
+            "thinking": NON_THINKING_CONFIG,
         }
 
         try:
@@ -454,6 +477,17 @@ def generate_poem_with_memory(
 ) -> PoemGeneration:
     rejected_titles = []
 
+    if should_skip_deepseek_for_peak_pricing():
+        print(
+            "Skipping DeepSeek call during configured peak pricing window; "
+            "using fallback poem."
+        )
+        return PoemGeneration(
+            result=None,
+            fallback_reason="peak_pricing_window",
+            rejected_titles=rejected_titles,
+        )
+
     for attempt in range(1, MAX_ATTEMPTS + 2):
         force_distinct_title = attempt > MAX_ATTEMPTS
         prompt = build_poem_prompt(
@@ -515,6 +549,8 @@ def main() -> None:
         "date": poem_data["date"],
         "title": poem_data["title"],
         "model": poem_data["model"],
+        "thinking": NON_THINKING_CONFIG,
+        "peak_pricing_guard_enabled": AVOID_PEAK_PRICING,
         "rejected_titles": generation.rejected_titles,
         "usage": generation.result.usage if generation.result else {},
     }

@@ -1,8 +1,10 @@
 import json
 import re
+from datetime import datetime, timezone
 
 import requests
 
+import scripts.deepseek_monitor as deepseek_monitor
 import scripts.generate_poem as generate_poem
 import scripts.notifications as notifications
 
@@ -121,7 +123,7 @@ def test_deepseek_api_sends_expected_request(monkeypatch):
             "messages": [{"role": "user", "content": "Escribe"}],
             "temperature": 0.4,
             "max_tokens": 123,
-            "thinking": {"type": "disabled"},
+            "thinking": generate_poem.NON_THINKING_CONFIG,
         },
         "headers": {
             "Content-Type": "application/json",
@@ -130,6 +132,41 @@ def test_deepseek_api_sends_expected_request(monkeypatch):
         "timeout": 120,
         "raised_for_status": True,
     }
+
+
+def test_deepseek_peak_pricing_windows_use_beijing_time():
+    assert generate_poem.is_deepseek_peak_pricing_time(
+        datetime(2026, 7, 4, 1, 0, tzinfo=timezone.utc)
+    )
+    assert not generate_poem.is_deepseek_peak_pricing_time(
+        datetime(2026, 7, 4, 4, 0, tzinfo=timezone.utc)
+    )
+    assert generate_poem.is_deepseek_peak_pricing_time(
+        datetime(2026, 7, 4, 6, 0, tzinfo=timezone.utc)
+    )
+    assert not generate_poem.is_deepseek_peak_pricing_time(
+        datetime(2026, 7, 4, 10, 0, tzinfo=timezone.utc)
+    )
+
+
+def test_generate_poem_with_memory_skips_api_during_peak_pricing(monkeypatch):
+    monkeypatch.setattr(generate_poem, "should_skip_deepseek_for_peak_pricing", lambda: True)
+
+    class FakeAPI:
+        def call(self, prompt, temperature, max_tokens):
+            raise AssertionError("DeepSeek should not be called during peak pricing")
+
+    generation = generate_poem.generate_poem_with_memory(
+        deepseek_api=FakeAPI(),
+        existing_poems=[],
+        target_date="2026-01-02",
+    )
+
+    assert generation == generate_poem.PoemGeneration(
+        result=None,
+        fallback_reason="peak_pricing_window",
+        rejected_titles=[],
+    )
 
 
 def test_build_poem_prompt_uses_recent_memory_and_rejected_titles():
@@ -340,6 +377,25 @@ def test_build_notification_message_reports_fallback():
     assert "FALLBACK: DeepSeek no genero poema" in message
 
 
+def test_build_notification_message_reports_peak_pricing_fallback():
+    message = notifications.build_notification_message(
+        poem_data={
+            "model": "fallback",
+            "date": "2026-01-02",
+            "title": "Bitácora del Código",
+            "poem": "Linea",
+        },
+        generation=generate_poem.PoemGeneration(
+            result=None,
+            fallback_reason="peak_pricing_window",
+            rejected_titles=[],
+        ),
+        balance=None,
+    )
+
+    assert "FALLBACK: ventana pico de DeepSeek" in message
+
+
 def test_build_notification_message_uses_saved_poem_model_for_cost():
     message = notifications.build_notification_message(
         poem_data={
@@ -488,3 +544,71 @@ def test_fetch_deepseek_balance_sends_authorization_header(monkeypatch):
         "timeout": 30,
         "raised_for_status": True,
     }
+
+
+def test_parse_deepseek_monitor_targets_from_env():
+    targets = deepseek_monitor.parse_targets(
+        "pricing=https://example.com/pricing, x=https://example.com/x"
+    )
+
+    assert targets == [
+        deepseek_monitor.MonitorTarget("pricing", "https://example.com/pricing"),
+        deepseek_monitor.MonitorTarget("x", "https://example.com/x"),
+    ]
+
+
+def test_deepseek_monitor_detects_changed_target(monkeypatch):
+    results = iter(
+        [
+            deepseek_monitor.FetchResult(
+                status_code=200,
+                content_hash="new-hash",
+                content_length=10,
+            )
+        ]
+    )
+
+    def fake_fetch(target):
+        return next(results)
+
+    monkeypatch.setattr(deepseek_monitor, "fetch_target", fake_fetch)
+
+    state, changes, errors = deepseek_monitor.monitor_targets(
+        [deepseek_monitor.MonitorTarget("pricing", "https://example.com/pricing")],
+        {
+            "targets": {
+                "pricing": {
+                    "url": "https://example.com/pricing",
+                    "content_hash": "old-hash",
+                    "last_changed_at": "2026-01-01T00:00:00+00:00",
+                }
+            }
+        },
+        checked_at="2026-01-02T00:00:00+00:00",
+    )
+
+    assert changes == ["pricing: https://example.com/pricing"]
+    assert errors == []
+    assert state["targets"]["pricing"]["content_hash"] == "new-hash"
+    assert state["targets"]["pricing"]["last_changed_at"] == "2026-01-02T00:00:00+00:00"
+
+
+def test_deepseek_monitor_initializes_without_alert(monkeypatch):
+    def fake_fetch(target):
+        return deepseek_monitor.FetchResult(
+            status_code=200,
+            content_hash="first-hash",
+            content_length=10,
+        )
+
+    monkeypatch.setattr(deepseek_monitor, "fetch_target", fake_fetch)
+
+    state, changes, errors = deepseek_monitor.monitor_targets(
+        [deepseek_monitor.MonitorTarget("pricing", "https://example.com/pricing")],
+        {},
+        checked_at="2026-01-02T00:00:00+00:00",
+    )
+
+    assert changes == []
+    assert errors == []
+    assert state["targets"]["pricing"]["content_hash"] == "first-hash"

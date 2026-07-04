@@ -43,13 +43,19 @@ Set `DEEPSEEK_API_KEY` in `.env` for local generation. You can override the mode
 
 Optional WhatsApp notifications use `CALLMEBOT_PHONE` and `CALLMEBOT_APIKEY` for personal CallMeBot messages. The message includes whether the poem was generated successfully or the fallback was used, token counts, estimated DeepSeek cost, current balance, and approximate poems remaining.
 
+DeepSeek cost controls are intentionally conservative:
+
+- Poem generation sends `thinking: {"type": "disabled"}` to use non-thinking mode.
+- `DEEPSEEK_AVOID_PEAK_PRICING` defaults to `true`; if a manual run happens during DeepSeek's tracked Beijing peak windows (`09:00-12:00` or `14:00-18:00`, UTC+8), the generator skips the API call and publishes the fallback poem instead.
+- The scheduled generation runs at `20:00 UTC`, outside those peak windows.
+
+The `Monitor DeepSeek` workflow checks DeepSeek pricing/changelog documentation daily, stores page hashes in `.github/deepseek-monitor-state.json`, and sends a WhatsApp alert when a watched source changes. Set the repository variable `DEEPSEEK_MONITOR_TARGETS` to override or extend the watched URLs in `name=url,name=url` format, for example to include a stable X/RSS mirror if one is available.
+
 - [Markdown Regex Editor](https://www.luismarrero.me/markdown-live) — A Markdown editor built using Regex.
 
 ## ✅ TODOs
 
-- [x] Mejorar diversidad del poeta con memoria rica de poemas anteriores, retry de títulos repetidos, prompt estricto anti-repetición, `max_tokens` y thinking desactivado.
-- [x] Enviar por WhatsApp el estado de generación, costo del poema diario, balance restante de DeepSeek y estimado de poemas disponibles.
-- [ ] Crear un monitor que avise cambios en pricing y modelos de DeepSeek.
+- [x] Crear un monitor que avise cambios en pricing y modelos de DeepSeek.
 
 ---
 
