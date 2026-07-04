@@ -36,7 +36,7 @@ uv run ruff check scripts tests            # lint
 uv run ruff format scripts tests           # format
 ```
 
-`DEEPSEEK_API_KEY` (and optional `DEEPSEEK_MODEL`) go in `.env` for local generation; without a key, `generate_poem.py` falls back to a hardcoded poem.
+`DEEPSEEK_API_KEY` (and optional `DEEPSEEK_MODEL`) go in `.env` for local generation; without a key, `generate_poem.py` falls back to a hardcoded poem. `DEEPSEEK_MAX_TOKENS`, `DEEPSEEK_MAX_ATTEMPTS`, `POEM_MEMORY_RECENT_LIMIT`, `POEM_MEMORY_DUPLICATE_LIMIT`, `POEM_MEMORY_KEYWORD_LIMIT`, and `POEM_MEMORY_TITLE_LIMIT` tune output size, retries, and prompt memory. Optional WhatsApp notifications use CallMeBot credentials (`CALLMEBOT_PHONE`, `CALLMEBOT_APIKEY`).
 
 ## Coding Style & Naming Conventions
 
@@ -60,8 +60,9 @@ Keep new data files schema-compatible with these definitions.
 
 ### AI poem pipeline
 
-`scripts/generate_poem.py` calls the DeepSeek chat completions API with a fixed Spanish-language prompt, parses the response into a title/body, and writes `src/ai_poems/<date>.json` (date = tomorrow in Puerto Rico time, since the workflow runs the evening before). Two GitHub Actions workflows drive this in production:
-- `.github/workflows/generate-poem.yml` — runs nightly at 20:00 UTC, generates the poem, commits it to `src/ai_poems/`.
+`scripts/generate_poem.py` calls the DeepSeek chat completions API with a Spanish-language prompt that includes compact memory from recent poems, frequent titles, openings, and keywords; retries repeated titles; escalates to a stricter anti-repetition prompt; parses the response into a title/body; and writes `src/ai_poems/<date>.json` (date = tomorrow in Puerto Rico time, since the workflow runs the evening before). The request caps output tokens and disables thinking mode for this simple poetry task. If DeepSeek fails or keeps repeating titles, the fallback poem is still published. When API usage and balance metadata are available, the notification workflow prints estimated cost and remaining poem capacity to the workflow logs and sends the same status by WhatsApp. Three GitHub Actions workflows drive this in production:
+- `.github/workflows/generate-poem.yml` — runs nightly at 20:00 UTC, generates the poem, commits it to `src/ai_poems/`, and uploads a one-day `run_status.json` artifact for notification.
+- `.github/workflows/send-notification.yml` — runs after a successful poem workflow, downloads `run_status.json`, fetches DeepSeek balance, and sends the CallMeBot WhatsApp notification.
 - `.github/workflows/rebuild-site.yml` — runs at 04:00 UTC, appends to `.update_log` and pushes, purely to trigger a rebuild/redeploy that picks up the poem committed a few hours earlier.
 
 Poem pages are rendered at `src/pages/poems/index.astro` (archive) and `src/pages/poems/[date].astro` (single poem), backed by `src/components/Poems.astro`.

@@ -4,6 +4,7 @@ import re
 import requests
 
 import scripts.generate_poem as generate_poem
+import scripts.notifications as notifications
 
 
 def test_parse_poem_splits_title_and_body():
@@ -40,9 +41,11 @@ def test_build_poem_data_uses_fallback_when_api_fails():
 
 def test_build_poem_data_uses_configured_model_for_api_response(monkeypatch):
     monkeypatch.setattr(generate_poem, "MODEL", "deepseek-test")
-    monkeypatch.setattr(generate_poem, "poem_date", lambda: "2026-01-02")
 
-    poem_data = generate_poem.build_poem_data("Titulo\n\nLinea uno\nLinea dos")
+    poem_data = generate_poem.build_poem_data(
+        "Titulo\n\nLinea uno\nLinea dos",
+        date="2026-01-02",
+    )
 
     assert poem_data == {
         "model": "deepseek-test",
@@ -81,7 +84,15 @@ def test_deepseek_api_sends_expected_request(monkeypatch):
             captured["raised_for_status"] = True
 
         def json(self):
-            return {"choices": [{"message": {"content": "Titulo\n\nLinea"}}]}
+            return {
+                "choices": [{"message": {"content": "Titulo\n\nLinea"}}],
+                "usage": {
+                    "prompt_tokens": 10,
+                    "completion_tokens": 5,
+                    "total_tokens": 15,
+                    "ignored": "not-int",
+                },
+            }
 
     def fake_post(url, json, headers, timeout):
         captured["url"] = url
@@ -97,20 +108,383 @@ def test_deepseek_api_sends_expected_request(monkeypatch):
         model="deepseek-test",
     )
 
-    result = api.call(prompt="Escribe", temperature=0.4)
+    result = api.call(prompt="Escribe", temperature=0.4, max_tokens=123)
 
-    assert result == "Titulo\n\nLinea"
+    assert result == generate_poem.DeepSeekResult(
+        content="Titulo\n\nLinea",
+        usage={"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
+    )
     assert captured == {
         "url": "https://example.com/chat",
         "json": {
             "model": "deepseek-test",
             "messages": [{"role": "user", "content": "Escribe"}],
             "temperature": 0.4,
+            "max_tokens": 123,
+            "thinking": {"type": "disabled"},
         },
         "headers": {
             "Content-Type": "application/json",
             "Authorization": "Bearer secret",
         },
         "timeout": 120,
+        "raised_for_status": True,
+    }
+
+
+def test_build_poem_prompt_uses_recent_memory_and_rejected_titles():
+    prompt = generate_poem.build_poem_prompt(
+        existing_poems=[
+            {
+                "date": "2026-01-01",
+                "title": "Algoritmo Poético",
+                "poem": "Linea",
+            },
+            {
+                "date": "2026-01-02",
+                "title": "Algoritmo Poético",
+                "poem": "Linea",
+            },
+        ],
+        target_date="2026-01-03",
+        attempt=2,
+        rejected_titles=["Algoritmo Poético"],
+    )
+
+    assert "Poemas recientes" in prompt
+    assert "apertura: Linea" in prompt
+    assert "keywords:" in prompt
+    assert "Títulos frecuentes prohibidos: Algoritmo Poético." in prompt
+    assert "Títulos rechazados en intentos anteriores: Algoritmo Poético." in prompt
+
+
+def test_build_poem_prompt_has_strict_mode_for_repeated_titles():
+    prompt = generate_poem.build_poem_prompt(
+        existing_poems=[
+            {
+                "date": "2026-01-01",
+                "title": "Algoritmo Poético",
+                "poem": "Linea",
+            }
+        ],
+        target_date="2026-01-02",
+        force_distinct_title=True,
+    )
+
+    assert "Modo anti-repetición estricto" in prompt
+    assert "No uses exactamente ninguno de estos títulos ya existentes" in prompt
+    assert "Algoritmo Poético" in prompt
+
+
+def test_generate_poem_with_memory_retries_repeated_title_then_succeeds(monkeypatch):
+    monkeypatch.setattr(generate_poem, "MAX_ATTEMPTS", 3)
+    existing_poems = [
+        {"date": "2026-01-01", "title": "Algoritmo Poético", "poem": "Linea"}
+    ]
+
+    class FakeAPI:
+        def __init__(self):
+            self.prompts = []
+            self.responses = [
+                generate_poem.DeepSeekResult(
+                    content="Algoritmo Poético\n\nLinea repetida",
+                    usage={},
+                ),
+                generate_poem.DeepSeekResult(
+                    content="Circuito Nuevo\n\nLinea fresca",
+                    usage={"total_tokens": 20},
+                ),
+            ]
+
+        def call(self, prompt, temperature, max_tokens):
+            self.prompts.append(prompt)
+            return self.responses.pop(0)
+
+    api = FakeAPI()
+
+    generation = generate_poem.generate_poem_with_memory(
+        deepseek_api=api,
+        existing_poems=existing_poems,
+        target_date="2026-01-02",
+    )
+
+    assert generation == generate_poem.PoemGeneration(
+        result=generate_poem.DeepSeekResult(
+            content="Circuito Nuevo\n\nLinea fresca",
+            usage={"total_tokens": 20},
+        ),
+        fallback_reason=None,
+        rejected_titles=["Algoritmo Poético"],
+    )
+    assert len(api.prompts) == 2
+    assert (
+        "Títulos rechazados en intentos anteriores: Algoritmo Poético."
+        in (api.prompts[1])
+    )
+
+
+def test_generate_poem_with_memory_uses_strict_retry_before_fallback(monkeypatch):
+    monkeypatch.setattr(generate_poem, "MAX_ATTEMPTS", 1)
+    existing_poems = [
+        {"date": "2026-01-01", "title": "Algoritmo Poético", "poem": "Linea"}
+    ]
+
+    class FakeAPI:
+        def __init__(self):
+            self.prompts = []
+            self.responses = [
+                generate_poem.DeepSeekResult(
+                    content="Algoritmo Poético\n\nLinea repetida",
+                    usage={},
+                ),
+                generate_poem.DeepSeekResult(
+                    content="Algoritmo Poético\n\nOtra linea repetida",
+                    usage={},
+                ),
+            ]
+
+        def call(self, prompt, temperature, max_tokens):
+            self.prompts.append(prompt)
+            return self.responses.pop(0)
+
+    api = FakeAPI()
+
+    generation = generate_poem.generate_poem_with_memory(
+        deepseek_api=api,
+        existing_poems=existing_poems,
+        target_date="2026-01-02",
+    )
+
+    assert generation == generate_poem.PoemGeneration(
+        result=None,
+        fallback_reason="repeated_titles",
+        rejected_titles=["Algoritmo Poético", "Algoritmo Poético"],
+    )
+    assert len(api.prompts) == 2
+    assert "Modo anti-repetición estricto" in api.prompts[1]
+
+
+def test_generate_poem_with_memory_reports_deepseek_unavailable():
+    class FakeAPI:
+        def call(self, prompt, temperature, max_tokens):
+            return None
+
+    generation = generate_poem.generate_poem_with_memory(
+        deepseek_api=FakeAPI(),
+        existing_poems=[],
+        target_date="2026-01-02",
+    )
+
+    assert generation == generate_poem.PoemGeneration(
+        result=None,
+        fallback_reason="deepseek_unavailable",
+        rejected_titles=[],
+    )
+
+
+def test_build_notification_message_reports_success_and_cost():
+    message = notifications.build_notification_message(
+        poem_data={
+            "model": "deepseek-v4-flash",
+            "date": "2026-01-02",
+            "title": "Circuito Nuevo",
+            "poem": "Linea fresca",
+        },
+        generation=generate_poem.PoemGeneration(
+            result=generate_poem.DeepSeekResult(
+                content="Circuito Nuevo\n\nLinea fresca",
+                usage={
+                    "prompt_tokens": 2020,
+                    "total_tokens": 2070,
+                    "prompt_cache_hit_tokens": 410,
+                    "prompt_cache_miss_tokens": 1590,
+                    "completion_tokens": 50,
+                },
+            ),
+            fallback_reason=None,
+            rejected_titles=["Algoritmo Poético"],
+        ),
+        balance={
+            "balance_infos": [
+                {"currency": "USD", "total_balance": "10.00"},
+            ]
+        },
+    )
+
+    assert "Generacion: OK" in message
+    assert "Titulos rechazados: Algoritmo Poético" in message
+    assert "Tokens: total 2,070, entrada 2,020" in message
+    assert "cache hit 410, cache miss 1,590, salida 50" in message
+    assert "Costo DeepSeek aprox (este poema): USD 0.00023775" in message
+    assert "Balance DeepSeek: USD 10.00" in message
+    assert "Poemas restantes aprox: 42,061" in message
+    assert "$" not in message
+
+
+def test_build_notification_message_reports_fallback():
+    message = notifications.build_notification_message(
+        poem_data={
+            "model": "fallback",
+            "date": "2026-01-02",
+            "title": "Bitácora del Código",
+            "poem": "Linea",
+        },
+        generation=generate_poem.PoemGeneration(
+            result=None,
+            fallback_reason="deepseek_unavailable",
+            rejected_titles=[],
+        ),
+        balance=None,
+    )
+
+    assert "FALLBACK: DeepSeek no genero poema" in message
+
+
+def test_build_notification_message_uses_saved_poem_model_for_cost():
+    message = notifications.build_notification_message(
+        poem_data={
+            "model": "deepseek-v4-pro",
+            "date": "2026-01-02",
+            "title": "Circuito Nuevo",
+        },
+        generation=generate_poem.PoemGeneration(
+            result=generate_poem.DeepSeekResult(
+                content="Circuito Nuevo\n\nLinea fresca",
+                usage={
+                    "prompt_tokens": 1_000_000,
+                    "prompt_cache_hit_tokens": 0,
+                    "prompt_cache_miss_tokens": 1_000_000,
+                    "completion_tokens": 0,
+                },
+            ),
+            fallback_reason=None,
+            rejected_titles=[],
+        ),
+        balance=None,
+    )
+
+    assert "Costo DeepSeek aprox (este poema): USD 0.43500000" in message
+
+
+def test_send_whatsapp_notification_uses_callmebot(monkeypatch):
+    captured = {}
+
+    class FakeResponse:
+        def raise_for_status(self):
+            captured["raised_for_status"] = True
+
+    def fake_get(url, params, timeout):
+        captured["url"] = url
+        captured["params"] = params
+        captured["timeout"] = timeout
+        return FakeResponse()
+
+    monkeypatch.setattr(requests, "get", fake_get)
+
+    sent = notifications.send_whatsapp_notification(
+        "hello\nworld",
+        callmebot_phone="+17875551234",
+        callmebot_apikey="callmebot-secret",
+    )
+
+    assert sent is True
+    assert captured == {
+        "url": "https://api.callmebot.com/whatsapp.php",
+        "params": {
+            "phone": "+17875551234",
+            "text": "hello\nworld",
+            "apikey": "callmebot-secret",
+        },
+        "timeout": 30,
+        "raised_for_status": True,
+    }
+
+
+def test_send_whatsapp_notification_redacts_callmebot_error(monkeypatch, capsys):
+    class FakeResponse:
+        status_code = 403
+
+        def raise_for_status(self):
+            raise requests.HTTPError(
+                "403 Client Error for url: "
+                "https://api.callmebot.com/whatsapp.php?"
+                "phone=15551234567&text=hello&apikey=secret-key",
+                response=self,
+            )
+
+    def fake_get(url, params, timeout):
+        return FakeResponse()
+
+    monkeypatch.setattr(requests, "get", fake_get)
+
+    sent = notifications.send_whatsapp_notification(
+        "hello",
+        callmebot_phone="15551234567",
+        callmebot_apikey="secret-key",
+    )
+
+    output = capsys.readouterr().out
+    assert sent is False
+    assert "HTTPError (HTTP 403)" in output
+    assert "secret-key" not in output
+    assert "15551234567" not in output
+
+
+def test_estimate_deepseek_cost_uses_cache_hit_and_miss_tokens():
+    cost = notifications.estimate_deepseek_cost_usd(
+        "deepseek-v4-flash",
+        {
+            "prompt_tokens": 120,
+            "prompt_cache_hit_tokens": 100,
+            "prompt_cache_miss_tokens": 20,
+            "completion_tokens": 50,
+        },
+    )
+
+    assert cost == (100 * 0.0028 + 20 * 0.14 + 50 * 0.28) / 1_000_000
+
+
+def test_usd_balance_from_response_reads_usd_total():
+    balance = notifications.usd_balance_from_response(
+        {
+            "is_available": True,
+            "balance_infos": [
+                {"currency": "CNY", "total_balance": "100.00"},
+                {"currency": "USD", "total_balance": "12.34"},
+            ],
+        }
+    )
+
+    assert balance == 12.34
+
+
+def test_fetch_deepseek_balance_sends_authorization_header(monkeypatch):
+    captured = {}
+
+    class FakeResponse:
+        def raise_for_status(self):
+            captured["raised_for_status"] = True
+
+        def json(self):
+            return {"is_available": True, "balance_infos": []}
+
+    def fake_get(url, headers, timeout):
+        captured["url"] = url
+        captured["headers"] = headers
+        captured["timeout"] = timeout
+        return FakeResponse()
+
+    monkeypatch.setattr(requests, "get", fake_get)
+
+    balance = notifications.fetch_deepseek_balance(
+        api_key="secret",
+        url="https://example.com/balance",
+    )
+
+    assert balance == {"is_available": True, "balance_infos": []}
+    assert captured == {
+        "url": "https://example.com/balance",
+        "headers": {"Authorization": "Bearer secret"},
+        "timeout": 30,
         "raised_for_status": True,
     }

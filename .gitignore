@@ -31,3 +31,6 @@ pnpm-debug.log*
 
 # vscode settings
 .vscode/
+
+# temporary run metadata
+run_status.json
