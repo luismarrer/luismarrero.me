@@ -3,7 +3,7 @@ name: Generate Poem
 on:
   workflow_dispatch:
   schedule:
-    - cron: '00 20 * * *' # Run every day at 20:00 UTC (starts cheap hour)
+    - cron: '00 20 * * *'
 
 permissions:
   contents: write
@@ -33,6 +33,13 @@ jobs:
 
       - name: Generate poem
         run: uv run python scripts/generate_poem.py
+
+      - name: Upload run status artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-status
+          path: run_status.json
+          retention-days: 1
 
       - name: Commit and push
         run: |
