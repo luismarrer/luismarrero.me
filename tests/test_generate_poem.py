@@ -1,11 +1,14 @@
 import json
 from datetime import datetime, timezone
+from pathlib import Path
 
 import requests
 
 import scripts.deepseek_monitor as deepseek_monitor
 import scripts.generate_poem as generate_poem
 import scripts.notifications as notifications
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
 
 
 def test_parse_poem_splits_title_and_body():
@@ -15,6 +18,15 @@ def test_parse_poem_splits_title_and_body():
 
     assert title == "Código Claro"
     assert body == "Primera línea\nSegunda línea"
+
+
+def test_deepseek_monitor_workflow_runs_as_module():
+    workflow = ROOT_DIR.joinpath(".github/workflows/monitor-deepseek.yml").read_text(
+        encoding="utf-8"
+    )
+
+    assert "uv run python -m scripts.deepseek_monitor" in workflow
+    assert "uv run python scripts/deepseek_monitor.py" not in workflow
 
 
 def test_parse_poem_handles_single_line_response():
