@@ -51,3 +51,5 @@ support no public claims.
 | Date | Artifact | Location | Notes |
 | --- | --- | --- | --- |
 | 2026-07-05 | Project workspace | `docs/open-source-journey/` | Phase 0 output; documentation only |
+| 2026-07-05 | upstream-contributor skill | https://github.com/luismarrer/upstream-contributor-skill | Methodology extraction; private repo; NOT an upstream contribution |
+| 2026-07-05 | Journey branch + draft PR | https://github.com/luismarrer/luismarrero.me/pull/17 | `open-source-journey` branch; living PR for docs + future articles; project infra, NOT an upstream contribution |

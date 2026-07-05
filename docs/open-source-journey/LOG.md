@@ -185,3 +185,42 @@ specification; no upstream contribution affected.
 contributor guidance (`CONTRIBUTING.md` + linked required reading); record
 required Node version, pnpm version, install/build commands, and how to run
 a single package's tests in `LOG.md`.
+
+---
+
+## Session 005 — 2026-07-05
+
+**Objective:** Publish the project documentation: sanitize, branch, organized
+commits, draft PR. First public action of the project.
+
+**Actions:**
+- Security audit of everything committed: zero secrets/credentials/emails;
+  local paths in `evals.json` sanitized (`<coordination-repo>`); private
+  skill-repo URLs left in (Luis: not a concern; skill may go public later).
+- Branch `open-source-journey` created; three organized commits (workspace,
+  roadmap, eval artifacts) pushed to the public repo.
+- Draft PR opened: https://github.com/luismarrer/luismarrero.me/pull/17 —
+  the living PR for the whole journey (docs now, articles later).
+- `STATUS.md` resume context consolidated back to five bullets (rule limit).
+
+**Observations:**
+- Luis named the emotional cost before this first public action — shame
+  about AI-heavy participation, fear of leaks. Answered with evidence
+  (audit) and honest framing; captured in `ARTICLE-NOTES.md` (emotional
+  moments) as first-hand article-3 material.
+
+**Failed hypotheses:** none.
+
+**Result:** Project documentation is public on the `open-source-journey`
+branch under draft PR #17. Main remains untouched.
+
+**Evidence produced:** PR #17; commits 8eccd59, d24fc77, a02f3cb (plus this
+follow-up); `EVIDENCE.md` local-artifacts rows for the skill repo and PR.
+
+**AI assistance:** AI-executed audit, git work, and PR under Luis's explicit
+instruction; Luis decided visibility questions (private-repo mentions OK).
+
+**Next action (project — unchanged):** Read current `withastro/astro` `main`
+contributor guidance (`CONTRIBUTING.md` + linked required reading); record
+required Node version, pnpm version, install/build commands, and how to run
+a single package's tests in `LOG.md`.
