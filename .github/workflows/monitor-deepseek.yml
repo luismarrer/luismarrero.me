@@ -33,7 +33,7 @@ jobs:
         run: uv sync --frozen --no-dev
 
       - name: Monitor DeepSeek docs and configured sources
-        run: uv run python scripts/deepseek_monitor.py
+        run: uv run python -m scripts.deepseek_monitor
 
       - name: Commit monitor state
         run: |
