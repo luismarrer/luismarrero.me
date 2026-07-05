@@ -53,10 +53,6 @@ The `Monitor DeepSeek` workflow checks DeepSeek pricing/changelog documentation 
 
 - [Markdown Regex Editor](https://www.luismarrero.me/markdown-live) — A Markdown editor built using Regex.
 
-## ✅ TODOs
-
-- [x] Crear un monitor que avise cambios en pricing y modelos de DeepSeek.
-
 ---
 
 Feel free to explore, fork, or reach out.

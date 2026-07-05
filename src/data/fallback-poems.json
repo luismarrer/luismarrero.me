@@ -1,0 +1,42 @@
+[
+  {
+    "title": "La Rama Serena",
+    "poem": "Abro una rama nueva\nsin prometer el sol;\nun cambio diminuto\nacomoda el rumor.\n\nEl test guarda la puerta,\nla duda aprende a entrar;\ny el código, más claro,\nme deja continuar."
+  },
+  {
+    "title": "Terminal de Lluvia",
+    "poem": "La terminal responde\ncon lluvia de señal;\nun cursor parpadea\ncomo faro local.\n\nNo todo error reclama\nbatalla ni tambor:\na veces solo pide\nleerlo con amor."
+  },
+  {
+    "title": "Archivo en Blanco",
+    "poem": "Un archivo despierta\ncon nombre provisional;\ntodavía no sabe\nqué mundo compilar.\n\nLe escribo una función,\npequeña y sin disfraz;\ny en su primera línea\nrespira la ciudad."
+  },
+  {
+    "title": "Commit de Madrugada",
+    "poem": "La madrugada guarda\nun commit sin alardear;\ntres líneas que corrigen\nla forma de esperar.\n\nCuando el diff se aquieta,\nla mente vuelve a oír\nese silencio limpio\nde algo listo para ir."
+  },
+  {
+    "title": "Variable de Bolsillo",
+    "poem": "Declaro una variable\npara guardar la luz;\nno cabe en la memoria,\npero insiste en ser azul.\n\nLa nombro con cuidado,\nla dejo respirar;\ny el programa recuerda\nlo que iba a olvidar."
+  },
+  {
+    "title": "Build en Voz Baja",
+    "poem": "El build pasa en voz baja,\nsin fuegos ni cartel;\nsolo una línea verde\ncruzando el panel.\n\nDespués de tanta prueba,\nla calma sabe a pan:\nun sistema pequeño\nque eligió funcionar."
+  },
+  {
+    "title": "Mapa de Excepciones",
+    "poem": "Trazo un mapa breve\nde excepciones al pasar;\ncada borde conoce\nsu manera de fallar.\n\nNo es miedo lo que escribe\nla ruta del control:\nes cuidar que la caída\ntambién tenga dirección."
+  },
+  {
+    "title": "El Bucle y la Taza",
+    "poem": "La taza se enfría\nmientras gira el for;\ncuento cada intento\ncomo quien mide el sol.\n\nAl final una salida,\nmodesta y puntual,\nconvierte la paciencia\nen valor retornal."
+  },
+  {
+    "title": "Prueba de Luz",
+    "poem": "Un test prende una lámpara\nen medio del refactor;\nno ilumina todo,\npero cuida el motor.\n\nSi mañana algo cambia\nsin avisar al pasar,\nesa luz diminuta\nlo sabrá señalar."
+  },
+  {
+    "title": "Sintaxis del Descanso",
+    "poem": "Cierro una llave abierta,\nrespiro antes de seguir;\nla sintaxis también\nnecesita dormir.\n\nNo todo se resuelve\nforzando otra sesión:\na veces el descanso\ncompila la intuición."
+  }
+]

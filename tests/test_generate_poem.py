@@ -1,5 +1,4 @@
 import json
-import re
 from datetime import datetime, timezone
 
 import requests
@@ -33,12 +32,141 @@ def test_parse_poem_strips_markdown_title_markup():
 
 
 def test_build_poem_data_uses_fallback_when_api_fails():
-    poem_data = generate_poem.build_poem_data(None)
+    fallback_poems = [
+        {"title": "Fallback Uno", "poem": "Linea uno"},
+        {"title": "Fallback Dos", "poem": "Linea dos"},
+    ]
+    poem_data = generate_poem.build_poem_data(
+        None,
+        date="2026-01-02",
+        fallback_poems=fallback_poems,
+    )
+    expected_title, expected_poem = generate_poem.parse_poem(
+        generate_poem.select_fallback_poem(
+            "2026-01-02",
+            fallback_poems=fallback_poems,
+        )
+    )
 
     assert poem_data["model"] == "fallback"
-    assert poem_data["title"] == "Bitácora del Código"
-    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", poem_data["date"])
-    assert "La pantalla respira" in poem_data["poem"]
+    assert poem_data["date"] == "2026-01-02"
+    assert poem_data["title"] == expected_title
+    assert poem_data["poem"] == expected_poem
+
+
+def test_select_fallback_poem_is_stable_for_same_date():
+    fallback_poems = [
+        {"title": "Fallback Uno", "poem": "Linea uno"},
+        {"title": "Fallback Dos", "poem": "Linea dos"},
+    ]
+
+    assert generate_poem.select_fallback_poem(
+        "2026-01-02",
+        fallback_poems=fallback_poems,
+    ) == generate_poem.select_fallback_poem(
+        "2026-01-02",
+        fallback_poems=fallback_poems,
+    )
+
+
+def test_select_fallback_poem_skips_previously_used_poem():
+    fallback_poems = [
+        {"title": "Fallback Uno", "poem": "Linea uno"},
+        {"title": "Fallback Dos", "poem": "Linea dos"},
+    ]
+    first_fallback = generate_poem.select_unused_fallback_poem(
+        "2026-01-05",
+        fallback_poems=fallback_poems,
+    )
+    existing_poems = [
+        {
+            "date": "2026-01-05",
+            "title": first_fallback["title"],
+            "poem": first_fallback["poem"],
+        }
+    ]
+
+    next_fallback = generate_poem.select_unused_fallback_poem(
+        "2026-01-12",
+        existing_poems=existing_poems,
+        fallback_poems=fallback_poems,
+    )
+
+    assert next_fallback != first_fallback
+
+
+def test_load_and_save_fallback_poems_keep_unique_valid_entries(tmp_path):
+    bank_path = tmp_path / "fallback-poems.json"
+    fallback_poems = [
+        {"title": "Fallback Uno", "poem": "Linea uno"},
+        {"title": "Fallback Uno", "poem": "Linea duplicada"},
+        {"title": "Fallback Dos", "poem": "Linea dos"},
+    ]
+
+    generate_poem.save_fallback_poems(fallback_poems, path=bank_path)
+
+    assert generate_poem.load_fallback_poems(bank_path) == [
+        {"title": "Fallback Uno", "poem": "Linea uno"},
+        {"title": "Fallback Dos", "poem": "Linea dos"},
+    ]
+
+
+def test_parse_fallback_refill_response_accepts_json_code_fence():
+    response = """```json
+[
+  {"title": "Reserva Uno", "poem": "Linea uno\\nLinea dos"},
+  {"title": "Reserva Dos", "poem": "Linea tres\\nLinea cuatro"}
+]
+```"""
+
+    assert generate_poem.parse_fallback_refill_response(response) == [
+        {"title": "Reserva Uno", "poem": "Linea uno\nLinea dos"},
+        {"title": "Reserva Dos", "poem": "Linea tres\nLinea cuatro"},
+    ]
+
+
+def test_refill_fallback_poem_bank_appends_new_unique_poems(tmp_path):
+    bank_path = tmp_path / "fallback-poems.json"
+    generate_poem.save_fallback_poems(
+        [{"title": "Usado", "poem": "Linea usada"}],
+        path=bank_path,
+    )
+    existing_poems = [{"date": "2026-01-01", "title": "Usado", "poem": "Linea usada"}]
+
+    class FakeAPI:
+        def call(self, prompt, temperature, max_tokens):
+            assert "Genera 3 poemas fallback" in prompt
+            assert max_tokens == generate_poem.FALLBACK_REFILL_MAX_TOKENS
+            return generate_poem.DeepSeekResult(
+                content=json.dumps(
+                    [
+                        {"title": "Usado", "poem": "Linea usada"},
+                        {"title": "Reserva Uno", "poem": "Linea uno"},
+                        {"title": "Reserva Dos", "poem": "Linea dos"},
+                    ]
+                ),
+                usage={},
+            )
+
+    stats = generate_poem.refill_fallback_poem_bank(
+        deepseek_api=FakeAPI(),
+        existing_poems=existing_poems,
+        path=bank_path,
+        threshold=2,
+        target=3,
+    )
+
+    assert stats == {
+        "available_before": 0,
+        "available_after": 2,
+        "added": 2,
+        "refilled": True,
+    }
+    assert generate_poem.load_fallback_poems(bank_path) == [
+        {"title": "Usado", "poem": "Linea usada"},
+        {"title": "Reserva Uno", "poem": "Linea uno"},
+        {"title": "Reserva Dos", "poem": "Linea dos"},
+    ]
 
 
 def test_build_poem_data_uses_configured_model_for_api_response(monkeypatch):
@@ -150,7 +278,9 @@ def test_deepseek_peak_pricing_windows_use_beijing_time():
 
 
 def test_generate_poem_with_memory_skips_api_during_peak_pricing(monkeypatch):
-    monkeypatch.setattr(generate_poem, "should_skip_deepseek_for_peak_pricing", lambda: True)
+    monkeypatch.setattr(
+        generate_poem, "should_skip_deepseek_for_peak_pricing", lambda: True
+    )
 
     class FakeAPI:
         def call(self, prompt, temperature, max_tokens):
@@ -215,6 +345,9 @@ def test_build_poem_prompt_has_strict_mode_for_repeated_titles():
 
 def test_generate_poem_with_memory_retries_repeated_title_then_succeeds(monkeypatch):
     monkeypatch.setattr(generate_poem, "MAX_ATTEMPTS", 3)
+    monkeypatch.setattr(
+        generate_poem, "should_skip_deepseek_for_peak_pricing", lambda: False
+    )
     existing_poems = [
         {"date": "2026-01-01", "title": "Algoritmo Poético", "poem": "Linea"}
     ]
@@ -262,6 +395,9 @@ def test_generate_poem_with_memory_retries_repeated_title_then_succeeds(monkeypa
 
 def test_generate_poem_with_memory_uses_strict_retry_before_fallback(monkeypatch):
     monkeypatch.setattr(generate_poem, "MAX_ATTEMPTS", 1)
+    monkeypatch.setattr(
+        generate_poem, "should_skip_deepseek_for_peak_pricing", lambda: False
+    )
     existing_poems = [
         {"date": "2026-01-01", "title": "Algoritmo Poético", "poem": "Linea"}
     ]
@@ -301,7 +437,11 @@ def test_generate_poem_with_memory_uses_strict_retry_before_fallback(monkeypatch
     assert "Modo anti-repetición estricto" in api.prompts[1]
 
 
-def test_generate_poem_with_memory_reports_deepseek_unavailable():
+def test_generate_poem_with_memory_reports_deepseek_unavailable(monkeypatch):
+    monkeypatch.setattr(
+        generate_poem, "should_skip_deepseek_for_peak_pricing", lambda: False
+    )
+
     class FakeAPI:
         def call(self, prompt, temperature, max_tokens):
             return None

@@ -100,7 +100,9 @@ def load_state(path: Path = STATE_PATH) -> dict[str, object]:
 
 def save_state(state: dict[str, object], path: Path = STATE_PATH) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def monitor_targets(
@@ -126,7 +128,9 @@ def monitor_targets(
             continue
 
         previous = stored_targets.get(target.name)
-        previous_hash = previous.get("content_hash") if isinstance(previous, dict) else None
+        previous_hash = (
+            previous.get("content_hash") if isinstance(previous, dict) else None
+        )
         is_first_seen = previous_hash is None
         has_changed = previous_hash is not None and previous_hash != result.content_hash
         last_changed_at = (
