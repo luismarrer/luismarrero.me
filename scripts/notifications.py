@@ -255,8 +255,7 @@ def print_cost_summary(
     if estimated_cost > 0:
         poems_remaining = int(balance_usd / estimated_cost)
         print(
-            "Approximate poems remaining at this cost: "
-            f"{format_count(poems_remaining)}"
+            f"Approximate poems remaining at this cost: {format_count(poems_remaining)}"
         )
 
 
