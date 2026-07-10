@@ -1,6 +1,6 @@
 {
   "model": "deepseek-v4-flash",
   "date": "2026-07-11",
-  "title": "La Última Iteración",
-  "poem": "Un `for` que no encuentra su fin,\nel puntero flota en la niebla.\nEl café se enfría en la taza\nmientras la pila se puebla.\nAfuera, la lluvia dibuja\nun `if` en el vidrio empañado.\nAdentro, dos ojos escrutan\nel `break` que nunca ha llegado."
+  "title": "La Pila del Olvido",
+  "poem": "Un `return` en la niebla,\nel puntero se desvía.\nLa función de ayer\nya no responde al nombre\nque le dimos al nacer."
 }
