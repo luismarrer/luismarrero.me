@@ -1,0 +1,6 @@
+{
+  "model": "deepseek-v4-flash",
+  "date": "2026-07-13",
+  "title": "El test que no falla",
+  "poem": "Escribo la aserción\nantes del primer paso,\nun faro en la niebla\nque el código no ha visto.\nEl test promete algo\nque aún no existe:\nuna función futura\nque sane una ruptura.\nPrimero el contrato,\ndespués su cumplimiento.\nLa prueba es un juramento\nque el tiempo hará cierto."
+}
