@@ -1,11 +1,11 @@
 {
-  "last_checked_at": "2026-07-16T13:00:30+00:00",
+  "last_checked_at": "2026-07-17T12:43:14+00:00",
   "targets": {
     "deepseek-pricing": {
       "content_hash": "5ed7309f6b8bf5dbae559a012341aa604d02b0cce2e20c48aaa6f0a0bf287f89",
       "content_length": 21596,
       "last_changed_at": "2026-07-13T13:33:57+00:00",
-      "last_checked_at": "2026-07-16T13:00:30+00:00",
+      "last_checked_at": "2026-07-17T12:43:14+00:00",
       "status_code": 200,
       "url": "https://api-docs.deepseek.com/quick_start/pricing"
     },
@@ -13,7 +13,7 @@
       "content_hash": "d2f1f6f3f4b67d764db0896375764266ceb24f953b775fae9c8fadc3ca3f83c7",
       "content_length": 45023,
       "last_changed_at": "2026-07-13T13:33:57+00:00",
-      "last_checked_at": "2026-07-16T13:00:30+00:00",
+      "last_checked_at": "2026-07-17T12:43:14+00:00",
       "status_code": 200,
       "url": "https://api-docs.deepseek.com/updates"
     }
