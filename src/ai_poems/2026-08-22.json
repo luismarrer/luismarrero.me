@@ -1,0 +1,6 @@
+{
+  "model": "deepseek-v4-flash",
+  "date": "2026-08-22",
+  "title": "La Memoria que no Cierra",
+  "poem": "Guardo en una variable\nun nombre que no se repite,\npero el heap se desborda\ncomo un cajón sin bisagras.\nCada intento de `free()`\nes un adiós que no termina,\ny el proceso, paciente,\nespera a que alguien lo mate.\nAfuera, el sol avanza;\nadentro, el puntero señala\nhacia un sitio que ya no existe."
+}
