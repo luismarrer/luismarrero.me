@@ -1,6 +1,6 @@
 {
-  "model": "deepseek-v4-flash",
+  "model": "fallback",
   "date": "2026-08-29",
-  "title": "El Relevo de la Cosecha",
-  "poem": "Si el proceso termina a medianoche,\n¿quién guarda las semillas?\nUn `cron` vigila el campo,\nriega cuando nadie mira.\nYo duermo con la azada\ny despierto a revisar\nque la tierra, ya autónoma,\nno me olvide al despertar."
+  "title": "El Bucle y la Taza",
+  "poem": "La taza se enfría\nmientras gira el for;\ncuento cada intento\ncomo quien mide el sol.\nAl final una salida,\nmodesta y puntual,\nconvierte la paciencia\nen valor retornal."
 }
