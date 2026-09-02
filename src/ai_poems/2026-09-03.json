@@ -1,0 +1,6 @@
+{
+  "model": "deepseek-v4-flash",
+  "date": "2026-09-03",
+  "title": "El Overflow",
+  "poem": "Declaro un entero sin signo\npara guardar tu regreso,\npero el bit más lejano\nse desborda en el proceso.\nEl compilador avisa:\n“posible pérdida de datos”.\nY yo, que perdí la cuenta,\nsigo sumando tus pasos."
+}
