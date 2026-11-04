@@ -38,5 +38,101 @@
   {
     "title": "Sintaxis del Descanso",
     "poem": "Cierro una llave abierta,\nrespiro antes de seguir;\nla sintaxis también\nnecesita dormir.\n\nNo todo se resuelve\nforzando otra sesión:\na veces el descanso\ncompila la intuición."
+  },
+  {
+    "title": "El Farol del Puerto",
+    "poem": "Enciendo un farol junto al muelle\npara que el barco del test encuentre orilla.\nSi la marea falla,\nla luz no se apaga:\nespera de pie sobre las tablas."
+  },
+  {
+    "title": "La Cuerda del Tendedero",
+    "poem": "Tensé la cuerda entre dos postes\ny colgué cada tarea como ropa.\nEl viento de la tarde\nrevisa una por una\nsin dejar caer ninguna."
+  },
+  {
+    "title": "Café a las Seis",
+    "poem": "Antes de abrir la puerta del taller,\npongo agua a calentar.\nEl termostato vigila\nque nadie se adelante\ny que nadie se quede atrás."
+  },
+  {
+    "title": "El Portero Discreto",
+    "poem": "Hay un portero que no habla:\nrevisa nombres en su lista,\ndeja pasar a los que traen permiso\ny a los demás les señala\nla banca del vestíbulo."
+  },
+  {
+    "title": "La Panadería de las Ramas",
+    "poem": "Abro una rama nueva en el horno\ny amaso una idea con harina.\nSi sale cruda,\nla devuelvo a la mesa\ny la amaso otra vez."
+  },
+  {
+    "title": "El Cartero de los Avisos",
+    "poem": "El cartero recorre los pasillos\ncon una carta para cada puerta.\nNo se detiene a leerla:\nsolo toca el timbre\ny sigue su ronda."
+  },
+  {
+    "title": "La Podadora del Jueves",
+    "poem": "Los jueves reviso el jardín de las tareas:\ncorto lo que sobra,\nriego lo que queda.\nEl césped no protesta,\nsolo crece un poco menos."
+  },
+  {
+    "title": "La Caja del Olvido",
+    "poem": "Cuando una tarea ya no sirve,\nla guardo en una caja de cartón.\nNo la rompo ni la quemo:\nla dejo ahí, cerrada,\npor si un día la busco."
+  },
+  {
+    "title": "El Reloj de Arena del Test",
+    "poem": "Volteo el reloj del test\nantes de cada intento.\nLa arena cae despacio\nmientras el resultado\nespera su turno en la mesa."
+  },
+  {
+    "title": "La Ventana del Depurador",
+    "poem": "Me asomo a la ventana del depurador\ny veo pasar los valores como transeúntes.\nUno se detiene,\nme saluda con la mano,\ny sigo su camino hasta el final."
+  },
+  {
+    "title": "El Sello del Commit",
+    "poem": "Después de ordenar la mesa\nderramo un poco de cera\nsobre el sobre del commit.\nEl sello queda tibio\nhasta que la noche lo enfría."
+  },
+  {
+    "title": "El Puente de las Condiciones",
+    "poem": "Construí un puente con dos orillas:\nsi el río está tranquilo, cruzo;\nsi no, espero en la arena.\nEl puente no se ofende\ncuando elijo no pasar."
+  },
+  {
+    "title": "La Libreta del Aprendiz",
+    "poem": "En la libreta del aprendiz\nhay dibujos de engranajes\ny una lista de preguntas\nque todavía no tienen respuesta.\nLa cierro sin apuro."
+  },
+  {
+    "title": "El Invernadero de los Datos",
+    "poem": "Bajo el techo del invernadero\ncrecen los datos en hileras.\nCada mañana los reviso,\nles quito la hoja seca\ny anoto su color."
+  },
+  {
+    "title": "La Escoba del Make",
+    "poem": "Después de compilar,\nbarro el taller con una escoba vieja.\nEl aserrín de los archivos\ncae en la bolsa\ny la puerta queda abierta."
+  },
+  {
+    "title": "El Farol de las Excepciones",
+    "poem": "Cuando algo se rompe en la casa,\nprendo un farol en el pasillo.\nLa luz no arregla nada,\npero alcanza para ver\ndónde quedó la herramienta."
+  },
+  {
+    "title": "La Firma del Guardián",
+    "poem": "El guardián firma cada permiso\ncon una pluma que no gotea.\nSi la tinta se acaba,\nno grita ni corre:\nbusca otra pluma en el cajón."
+  },
+  {
+    "title": "La Mesa de las Pruebas",
+    "poem": "Sobre la mesa de las pruebas\npongo tres vasos y una jarra.\nCada vaso recibe su porción\ny el que sobra se devuelve\na la jarra con cuidado."
+  },
+  {
+    "title": "El Hilo del Reloj",
+    "poem": "El reloj del taller tiene un hilo\nque se estira cada medianoche.\nYo lo sostengo sin tirar,\npara que la hora no se rompa\nantes del amanecer."
+  },
+  {
+    "title": "La Sombra del Índice",
+    "poem": "El índice se salió del estante\ny su sombra quedó en el suelo.\nLa recojo con una escoba\nsin preguntarle por qué\nse fue sin avisar."
+  },
+  {
+    "title": "El Cuaderno del Ritmo",
+    "poem": "Anoto el ritmo de las tareas\nen un cuaderno de tapas azules.\nUn día se atrasa una,\notro día se adelanta otra;\nel cuaderno no se queja."
+  },
+  {
+    "title": "La Cesta de los Avisos",
+    "poem": "Dejo una cesta junto a la puerta\npara los avisos que llegan de noche.\nPor la mañana los leo uno a uno\ny los devuelvo al cesto\nde los que ya cumplí."
+  },
+  {
+    "title": "El Banco del Compilador",
+    "poem": "El compilador se sienta en un banco\na mirar cómo escribo.\nNo opina, no aplaude,\nsolo espera a que termine\npara levantarse despacio."
+  },
+  {
+    "title": "La Llave del Último Cuarto",
+    "poem": "Hay un cuarto al final del pasillo\nque abro solo cuando todo duerme.\nAdentro guardo la llave,\nuna silla y una lámpara\nque nunca se apaga del todo."
   }
 ]
