@@ -1,19 +1,19 @@
 {
-  "last_checked_at": "2026-11-17T19:57:45+00:00",
+  "last_checked_at": "2026-11-18T19:29:21+00:00",
   "targets": {
     "deepseek-pricing": {
-      "content_hash": "5efd7e7661de5b86a1a3d5569ea5d9d8633bf1ca1c311ec42baace85ef18d78e",
-      "content_length": 29133,
-      "last_changed_at": "2026-11-16T21:10:15+00:00",
-      "last_checked_at": "2026-11-17T19:57:45+00:00",
+      "content_hash": "1cfdcd452dbb2b59f32d220190237d4a839fcd807ff4a14887b43c23186c9cfc",
+      "content_length": 29430,
+      "last_changed_at": "2026-11-18T19:29:21+00:00",
+      "last_checked_at": "2026-11-18T19:29:21+00:00",
       "status_code": 200,
       "url": "https://api-docs.deepseek.com/quick_start/pricing"
     },
     "deepseek-updates": {
-      "content_hash": "5d7563efb62b664b220ead07b335bf7f07a107ea6d96e6e5b97e2fdf72aab1a7",
+      "content_hash": "335f7b3123d439d0b036fe38ed94d13a9fef69211e71732490723143903f4c87",
       "content_length": 57618,
-      "last_changed_at": "2026-11-16T21:10:15+00:00",
-      "last_checked_at": "2026-11-17T19:57:45+00:00",
+      "last_changed_at": "2026-11-18T19:29:21+00:00",
+      "last_checked_at": "2026-11-18T19:29:21+00:00",
       "status_code": 200,
       "url": "https://api-docs.deepseek.com/updates"
     }
